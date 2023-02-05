@@ -76,6 +76,8 @@ def encoded_action(action):
 
 
 class Game:
+    """中国象棋游戏
+    """    
     def __init__(self, init_fen: Optional[str], use_rule: bool):
         self.init_fen = init_fen
         self.use_rule = use_rule
