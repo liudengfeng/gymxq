@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gymxq"
+version = "1.0.0"
+dependencies = [
+    "gymnasium>=0.27.0",
+    "pygame>=2.1.2",
+    "moviepy>=1.0.3",
+    "termcolor>=2.2.0",
+    "pytest>=7.1.3",
+]

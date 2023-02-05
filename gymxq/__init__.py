@@ -1,0 +1,16 @@
+from gymnasium.envs.registration import register
+from .envs.game import Game, game_feature_shape
+
+register(
+    id="gymxq/xqv0",
+    entry_point="gymxq.envs:XiangQiV0",
+    max_episode_steps=200,
+)
+
+register(
+    id="gymxq/xqv1",
+    entry_point="gymxq.envs:XiangQiV1",
+    max_episode_steps=200,
+)
+
+__all__ = ["Game", "game_feature_shape"]
