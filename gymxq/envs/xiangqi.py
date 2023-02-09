@@ -384,18 +384,14 @@ class XQEnvBase(gym.Env):
 
 
 class XiangQiV0(XQEnvBase):
-    """观察为rgb_array"""
+    """v0版本以单个RGB image作为观察对象"""
 
     def __init__(
         self,
-        render_mode: Optional[str] = None,
         init_fen: Optional[str] = "",
-        use_rule: bool = False,
         gen_qp: bool = False,
     ):
-        assert render_mode != "ansi", "v0版本以单个RGB image作为观察对象，不支持ansi显示模式"
-        assert not use_rule, "v0版本中象棋游戏不使用判例规则"
-        super().__init__(render_mode, init_fen, False, gen_qp)
+        super().__init__("rgb_array", init_fen, False, gen_qp)
 
     def _make_observation_space(self):
         self.observation_space = spaces.Box(
@@ -433,10 +429,7 @@ class XiangQiV0(XQEnvBase):
         if terminated:
             self._update_info()
 
-        if self.render_mode == "ansi":
-            render_board_to_text(self.game.board, self.last_move(), None)
-        else:
-            self._render_gui(self.render_mode)
+        self._render_gui("rgb_array")
 
         observation = self._get_obs()
 
