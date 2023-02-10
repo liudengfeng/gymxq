@@ -8,13 +8,13 @@ from gymnasium.wrappers.resize_observation import ResizeObservation
 from PIL import Image
 
 
-def test_basic():
+def test_basic_v0():
     env = gymnasium.make("gymxq/xqv0")
     obs, _ = env.reset()
     assert obs.shape == (SCREEN_HEIGHT, SCREEN_WIDTH, 3)
 
 
-# def test_view_qipu():
+# def test_view_qipu_v0():
 #     env = gymnasium.make("gymxq/xqv0", gen_qp=True)
 #     obs, _ = env.reset()
 #     while True:
@@ -27,7 +27,7 @@ def test_basic():
 #             break
 
 
-def test_resize():
+def test_resize_v0():
     env = gymnasium.make("gymxq/xqv0", gen_qp=False)
     H, W = 300, 270
     env = ResizeObservation(env, (H, W))
@@ -41,7 +41,7 @@ def test_resize():
     # time.sleep(3)
 
 
-def test_vector():
+def test_vector_v0():
     # 测试矢量环境
     n = 3
     envs = gymnasium.vector.make("gymxq/xqv0", gen_qp=False, num_envs=n)

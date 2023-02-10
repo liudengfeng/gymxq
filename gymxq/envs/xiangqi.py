@@ -163,7 +163,7 @@ class XQEnvBase(gym.Env):
 
     def render(self):
         if self.render_mode == "ansi":
-            render_board_to_text(self.game.board, self.last_move(), None)
+            return render_board_to_text(self.game.board, self.last_move(), None)
         else:
             self._render_gui(self.render_mode)
         if self.render_mode == "rgb_array":
@@ -490,9 +490,9 @@ class XiangQiV1(XQEnvBase):
         if terminated:
             self._update_info()
 
-        if self.render_mode == "ansi":
-            render_board_to_text(self.game.board, self.last_move(), None)
-        elif self.render_mode == "human":
+        # if self.render_mode == "ansi":
+        #     render_board_to_text(self.game.board, self.last_move(), None)
+        if self.render_mode == "human":
             self._render_gui(self.render_mode)
 
         return observation, reward, terminated, truncated, self.satistics_info

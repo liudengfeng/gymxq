@@ -6,7 +6,7 @@ import pygame
 import six
 import xqcpp
 from importlib.resources import files
-
+from contextlib import closing
 from .constants import (
     BOARD_NUM_PROMPT,
     NUM_COL,
@@ -156,8 +156,8 @@ def render_board_to_text(
         next_player = "轮到{}走子".format(board.next_player_string())
         outfile.write(next_player + "\n")
 
-    # with closing(outfile):
-    #     return outfile.getvalue()
+    with closing(outfile):
+        return outfile.getvalue()
 
 
 def colorize_v2(string, color, bold=False):
