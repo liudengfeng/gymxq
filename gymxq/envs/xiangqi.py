@@ -392,10 +392,15 @@ class XiangQiV0(XQEnvBase):
 
     def __init__(
         self,
+        render_mode: Optional[str] = "rgb_array",
         init_fen: Optional[str] = "",
         gen_qp: bool = False,
     ):
-        super().__init__("human", init_fen, False, gen_qp)
+        assert render_mode in [
+            "human",
+            "rgb_array",
+        ], "render mode must in human,rgb_array"
+        super().__init__(render_mode, init_fen, False, gen_qp)
 
     def _make_observation_space(self):
         self.observation_space = spaces.Box(
@@ -433,7 +438,7 @@ class XiangQiV0(XQEnvBase):
         if terminated:
             self._update_info()
 
-        self._render_gui("human")
+        self._render_gui(self.render_mode)
 
         observation = self._get_obs()
 
