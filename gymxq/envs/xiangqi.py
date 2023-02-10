@@ -9,7 +9,7 @@ import pygame
 from gymnasium import spaces
 
 from gymxq.constants import *
-from gymxq.envs.game import Game, game_feature_shape
+from gymxq.envs.game import Game
 from gymxq.utils import (
     get_center,
     get_piece_png_file,
@@ -359,6 +359,10 @@ class XQEnvBase(gym.Env):
         # 绘制移动标记
         self._mark_move()
 
+        # 走子方
+        player = "红方" if self.game.to_play() == 1 else "黑方"
+        self._draw_text(player, (270, 300), True)
+
         # 对局信息
         self._draw_info()
 
@@ -391,7 +395,7 @@ class XiangQiV0(XQEnvBase):
         init_fen: Optional[str] = "",
         gen_qp: bool = False,
     ):
-        super().__init__("rgb_array", init_fen, False, gen_qp)
+        super().__init__("human", init_fen, False, gen_qp)
 
     def _make_observation_space(self):
         self.observation_space = spaces.Box(
@@ -429,7 +433,7 @@ class XiangQiV0(XQEnvBase):
         if terminated:
             self._update_info()
 
-        self._render_gui("rgb_array")
+        self._render_gui("human")
 
         observation = self._get_obs()
 
