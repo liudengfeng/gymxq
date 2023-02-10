@@ -268,10 +268,10 @@ class XQEnvBase(gym.Env):
         h_offset = 10
         self._draw_text("棋谱", (self.w_s + w_offset, h_s), True)
         # 如果黑方先行，首先在棋谱中添加 None
-        # 此时步数比实际多一
         steps = math.ceil(len(self.cn_qipu) / 2)
         # 最多显示近20条
-        to_view = self.cn_qipu[-20:]
+        to_select = 19 if len(self.cn_qipu) % 2 == 1 else 20
+        to_view = self.cn_qipu[-to_select:]
         n = math.ceil(len(to_view) / 2)
         for i, qp in enumerate(to_view, 1):
             row = (i + 1) // 2
