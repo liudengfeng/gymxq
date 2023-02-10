@@ -475,7 +475,7 @@ class XiangQiV1(XQEnvBase):
         ):
             truncated = True
             reward = 0
-            terminated = True
+            # terminated = True
             self.over_max_episode_steps = True
 
         if self.gen_qp:
@@ -485,18 +485,9 @@ class XiangQiV1(XQEnvBase):
         if terminated:
             self._update_info()
 
-        # if self.render_mode == "human" or self.render_mode == "rgb_array":
-        #     self._render_gui(self.render_mode)
-        # elif self.render_mode == "ansi":
-        #     render_board_to_text(self.game.board, self.last_move(), None)
-        # if self.render_mode == "human" or self.render_mode == "rgb_array":
-        #     self._render_gui(self.render_mode)
-
         if self.render_mode == "ansi":
             render_board_to_text(self.game.board, self.last_move(), None)
         elif self.render_mode == "human":
             self._render_gui(self.render_mode)
-
-        # observation = self.render()
 
         return observation, reward, terminated, truncated, self.satistics_info
