@@ -3,6 +3,8 @@ import gymxq
 import time
 import gymnasium
 from gymxq.constants import *
+from gymnasium.wrappers.resize_observation import ResizeObservation
+from PIL import Image
 
 
 def test_basic():
@@ -18,6 +20,21 @@ def test_view_qipu():
         action = env.sample_action()
         observation, reward, terminated, truncated, info = env.step(action)
         env.render()
-        time.sleep(1)
+        # time.sleep(1)
         if terminated or truncated:
+            # time.sleep(3)
             break
+
+
+def test_resize():
+    env = gymnasium.make("gymxq/xqv0", gen_qp=False)
+    H, W = 300, 270
+    env = ResizeObservation(env, (H, W))
+    obs, _ = env.reset()
+    assert obs.shape == (H, W, 3)
+    action = env.sample_action()
+    observation, reward, terminated, truncated, info = env.step(action)
+    assert observation.shape == (H, W, 3)
+    # image = Image.fromarray(observation)
+    # image.show()
+    # time.sleep(3)
