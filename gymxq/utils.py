@@ -4,6 +4,7 @@ from typing import Optional, List
 import termcolor
 import pygame
 import six
+from io import StringIO
 import xqcpp
 from importlib.resources import files
 from contextlib import closing
@@ -122,8 +123,8 @@ def render_board_to_text(
     Note:
         0.5 ms 速度更快
     """
-    # outfile = StringIO()
-    outfile = sys.stdout
+    outfile = StringIO()
+    # outfile = sys.stdout
     if title:
         outfile.write(title.center(17))
         outfile.write("\n")

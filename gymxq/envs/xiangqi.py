@@ -164,12 +164,12 @@ class XQEnvBase(gym.Env):
     def render(self):
         if self.render_mode == "ansi":
             return render_board_to_text(self.game.board, self.last_move(), None)
-        else:
-            self._render_gui(self.render_mode)
-        if self.render_mode == "rgb_array":
+        elif self.render_mode == "rgb_array":
             return np.transpose(
                 np.array(pygame.surfarray.pixels3d(self.window_surface)), axes=(1, 0, 2)
             )
+        else:
+            self._render_gui(self.render_mode)
 
     def last_move(self):
         actions = self.game.action_history
