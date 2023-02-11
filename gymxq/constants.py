@@ -11,7 +11,6 @@ NUM_ACTIONS = 2086
 NUM_COL = 9
 NUM_ROW = 10
 
-# 14个棋子 + 连续未吃子
 NUM_HISTORY = 18
 
 FPS = 60

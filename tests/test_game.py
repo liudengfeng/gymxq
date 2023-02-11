@@ -59,7 +59,7 @@ def test_init_game(
     assert g.continuous_uneaten_history[-1] == expected_no_eat_num
     assert len(g.legal_actions_history[-1]) == expected_action_num
 
-
+# TODO:
 @pytest.mark.parametrize(
     "use_rule,expected_len",
     [(False, 1), (True, NUM_HISTORY)],

@@ -76,12 +76,14 @@ def encoded_action(action):
 
 
 class Game:
-    """中国象棋游戏
-    """    
+    """中国象棋游戏"""
+
     def __init__(self, init_fen: Optional[str], use_rule: bool):
         self.init_fen = init_fen
         self.use_rule = use_rule
-        self.k = NUM_HISTORY if self.use_rule else 1
+        # 使用GameHistory表达堆积
+        # self.k = NUM_HISTORY if self.use_rule else 1
+        self.k = 1
 
         # 初始化列表
         self._illegal_move = False

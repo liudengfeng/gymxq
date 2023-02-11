@@ -449,7 +449,8 @@ class XiangQiV1(XQEnvBase):
     """观察为编码对象"""
 
     def _make_observation_space(self):
-        k = NUM_HISTORY if self.use_rule else 1
+        # k = NUM_HISTORY if self.use_rule else 1
+        k = 1
         self.observation_space = spaces.Dict(
             {
                 # [a,b]
@@ -461,7 +462,7 @@ class XiangQiV1(XQEnvBase):
                 ),
                 "a": spaces.Box(-1, NUM_ACTIONS - 1, (k,), dtype=np.int16),
                 "continuous_uneaten": spaces.Discrete(MAX_NUM_NO_EAT, start=-1),
-                "to_play": spaces.Discrete(NUM_PLAYER),
+                "to_play": spaces.Discrete(NUM_PLAYER, start=1),
             }
         )
 
