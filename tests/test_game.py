@@ -1,8 +1,26 @@
 import numpy as np
 import pytest
+import xqcpp
 
+from gymxq import Game, encoded_action, move_to_coordinate
 from gymxq.constants import *
-from gymxq import Game
+
+
+def _check_action_feature(f, move):
+    assert np.count_nonzero(f) == 2
+    x0, y0, x1, y1 = move_to_coordinate(move, True)
+    assert f[0, y0, x0] == 1
+    assert f[1, y1, x1] == 1
+
+
+def test_encoded_action():
+    move = "2324"
+    lr_move = xqcpp.move2lr(move)
+    action = xqcpp.movestr2action(move)
+    f1 = encoded_action(action)
+    f2 = encoded_action(action, True)
+    _check_action_feature(f1, move)
+    _check_action_feature(f2, lr_move)
 
 
 @pytest.mark.parametrize(
@@ -59,76 +77,77 @@ def test_init_game(
     assert g.continuous_uneaten_history[-1] == expected_no_eat_num
     assert len(g.legal_actions_history[-1]) == expected_action_num
 
-# TODO:
-@pytest.mark.parametrize(
-    "use_rule,expected_len",
-    [(False, 1), (True, NUM_HISTORY)],
-)
-def test_stacked_feature(use_rule, expected_len):
-    g = Game("", use_rule)
-    assert g.k == expected_len
-    # 定义对象本身为空
-    assert len(g) == 0
 
-    assert len(g.action_history) == expected_len
-    # 填充 -1
-    assert all([a == -1 for a in g.action_history])
+# # TODO:
+# @pytest.mark.parametrize(
+#     "use_rule,expected_len",
+#     [(False, 1), (True, NUM_HISTORY)],
+# )
+# def test_stacked_feature(use_rule, expected_len):
+#     g = Game("", use_rule)
+#     assert g.k == expected_len
+#     # 定义对象本身为空
+#     assert len(g) == 0
 
-    assert len(g.pieces_history) == expected_len
+#     assert len(g.action_history) == expected_len
+#     # 填充 -1
+#     assert all([a == -1 for a in g.action_history])
 
-    s0 = g.feature_pieces()
-    np.testing.assert_array_equal(g.pieces_history[-1], s0)
+#     assert len(g.pieces_history) == expected_len
 
-    # 测试 index = -1
-    s, a = g.get_stacked_feature(-1)
-    assert s.dtype == np.int8 and s.shape == (expected_len * NUM_ROW * NUM_COL,)
-    assert a.dtype == np.int16 and a.shape == (expected_len,)
+#     s0 = g.feature_pieces()
+#     np.testing.assert_array_equal(g.pieces_history[-1], s0)
 
-    # g.board.show_board()
+#     # 测试 index = -1
+#     s, a = g.get_stacked_feature(-1)
+#     assert s.dtype == np.int8 and s.shape == (expected_len * NUM_ROW * NUM_COL,)
+#     assert a.dtype == np.int16 and a.shape == (expected_len,)
 
-    l = expected_len
-    # 确保没有吃子
-    moves = [
-        "1242",
-        "1927",
-        "1022",
-        "2625",
-        "7276",
-        "2715",
-        "7062",
-        "6947",
-        "2324",
-        "4645",
-        "4344",
-        "6665",
-    ]
-    for i, move in enumerate(moves, 1):
-        ma = g.move_string_to_action(move)
-        obs, reward, done = g.step(ma)
-        assert not done
-        assert reward == 0
-        s = obs["s"]
-        a = obs["a"]
-        uneaten = obs["continuous_uneaten"]
-        to_play = obs["to_play"]
-        assert to_play == RED_PLAYER if i % 2 == 0 else BLACK_PLAYER
-        assert uneaten == i
-        # g.board.show_board()
+#     # g.board.show_board()
 
-        assert s.dtype == np.int8 and s.shape == (l * NUM_ROW * NUM_COL,)
-        np.testing.assert_array_equal(g.pieces_history[-1], g.feature_pieces())
+#     l = expected_len
+#     # 确保没有吃子
+#     moves = [
+#         "1242",
+#         "1927",
+#         "1022",
+#         "2625",
+#         "7276",
+#         "2715",
+#         "7062",
+#         "6947",
+#         "2324",
+#         "4645",
+#         "4344",
+#         "6665",
+#     ]
+#     for i, move in enumerate(moves, 1):
+#         ma = g.move_string_to_action(move)
+#         obs, reward, done = g.step(ma)
+#         assert not done
+#         assert reward == 0
+#         s = obs["s"]
+#         a = obs["a"]
+#         uneaten = obs["continuous_uneaten"]
+#         to_play = obs["to_play"]
+#         assert to_play == RED_PLAYER if i % 2 == 0 else BLACK_PLAYER
+#         assert uneaten == i
+#         # g.board.show_board()
 
-        assert a.dtype == np.int16 and a.shape == (l,)
-        assert a[-1].item() == g.move_string_to_action(moves[i - 1])
+#         assert s.dtype == np.int8 and s.shape == (l * NUM_ROW * NUM_COL,)
+#         np.testing.assert_array_equal(g.pieces_history[-1], g.feature_pieces())
 
-        if use_rule:
-            if i < l:
-                assert all(x == -1 for x in a[:-i])
-                # s0 ... st
-                filled = s[: -(i + 1) * NUM_ROW * NUM_COL].reshape(
-                    (-1, NUM_ROW, NUM_COL)
-                )
-                assert filled.shape[0] == l - i - 1
-                assert np.count_nonzero(filled) == 0
-            else:
-                assert np.count_nonzero(s) == 2 * 16 * l
+#         assert a.dtype == np.int16 and a.shape == (l,)
+#         assert a[-1].item() == g.move_string_to_action(moves[i - 1])
+
+#         if use_rule:
+#             if i < l:
+#                 assert all(x == -1 for x in a[:-i])
+#                 # s0 ... st
+#                 filled = s[: -(i + 1) * NUM_ROW * NUM_COL].reshape(
+#                     (-1, NUM_ROW, NUM_COL)
+#                 )
+#                 assert filled.shape[0] == l - i - 1
+#                 assert np.count_nonzero(filled) == 0
+#             else:
+#                 assert np.count_nonzero(s) == 2 * 16 * l

@@ -1,5 +1,6 @@
 from gymnasium.envs.registration import register
-from .envs.game import Game, game_feature_shape
+from .envs.game import Game, game_feature_shape, encoded_action
+from .utils import move_to_coordinate
 
 register(
     id="gymxq/xqv0",
@@ -13,4 +14,4 @@ register(
     max_episode_steps=200,
 )
 
-__all__ = ["Game", "game_feature_shape"]
+__all__ = ["Game", "game_feature_shape", "encoded_action", "move_to_coordinate"]

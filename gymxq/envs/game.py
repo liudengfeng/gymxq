@@ -55,7 +55,7 @@ def game_feature_shape(use_rule: bool):
         return (NUM_PIECE * NUM_PLAYER + 3, NUM_ROW, NUM_COL)
 
 
-def encoded_action(action):
+def encoded_action(action: int, lr: bool = False):
     """编码移动序号
 
     Args:
@@ -69,6 +69,8 @@ def encoded_action(action):
         return res
     else:
         move = xqcpp.action2movestr(action)
+        if lr:
+            move = xqcpp.move2lr(move)
         x0, y0, x1, y1 = move_to_coordinate(move, True)
         res[0][y0][x0] = 1
         res[1][y1][x1] = 1
