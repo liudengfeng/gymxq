@@ -304,9 +304,9 @@ class Game:
         Returns:
             ndarray: 特征编码数组
         """
-        if idx == -1:
-            return self.get_stacked_feature(len(self.reward_history))
         max_idx = len(self.reward_history)
+        if idx == -1:
+            return self.get_stacked_feature(max_idx)
         assert idx >= 0 and idx <= max_idx, "idx有效范围{}~{},无效输入{}".format(
             0, max_idx, idx
         )
