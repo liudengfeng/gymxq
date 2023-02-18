@@ -88,6 +88,7 @@ class Game:
         self.k = 1
 
         # 初始化列表
+        self._reward = 2
         self._illegal_move = False
         self.to_play_id_history = []
         self.legal_actions_history = []
@@ -216,12 +217,25 @@ class Game:
         self.legal_actions_history.append(self.board.legal_actions())
 
     def step(self, action):
-        termination = self.board.is_finished() or self._illegal_move
-        assert not termination, "游戏已经结束"
-        if action not in self.legal_actions_history[-1]:
+        # 吸收状态
+        if self._reward != 2:
+            s, a = self.get_stacked_feature(len(self.reward_history))
+            return (
+                {
+                    "s": s,
+                    "a": a,
+                    "continuous_uneaten": self.continuous_uneaten_history[-1],
+                    "to_play": self.to_play_id_history[-1],
+                },
+                self._reward,
+                True,
+            )
+        # 非法走子
+        if self._illegal_move or action not in self.legal_actions_history[-1]:
             self._illegal_move = True
             termination = True
             reward = -1 if self.player_id_ == RED_PLAYER else 1
+            self._reward = reward
             s, a = self.get_stacked_feature(len(self.reward_history))
             # self.board.show_board(True, "非法走子{}".format(self.action_to_move_string(action)))
             return (
@@ -240,6 +254,8 @@ class Game:
         termination = self.board.is_finished()
         # 棋盘假设红方先行，其结果以红方角度定义 [1：红胜, -1：红负, 0：平局]
         reward = self.board.reward() if termination else 0
+        if termination:
+            self._reward = reward
         # reward始终以当前走子方角度来修正，即当前走子方胜得分1，负得分-1，否则为0
         # Final outcomes {lose, draw, win} in board games are treated as reward_history ut ∈ {−1, 0, +1}
         # reward *= 1 if self.player_id_ == RED_PLAYER else -1
