@@ -104,7 +104,7 @@ class XQEnvBase(gym.Env):
 
         self.game.reset()
         # episode steps
-        self.satistics_info["l"] = self.game.board.steps()
+        self.satistics_info["l"] = self.game.board.steps() - 1
         if self.render_mode in ["human", "rgb_array"]:
             self._render_gui(self.render_mode)
         observation = self._get_obs()
@@ -412,7 +412,6 @@ class XiangQiV0(XQEnvBase):
         )
 
     def _get_obs(self):
-        # self._render_gui(self.render_mode)
         return np.transpose(
             np.array(pygame.surfarray.pixels3d(self.window_surface)), axes=(1, 0, 2)
         )
@@ -442,7 +441,8 @@ class XiangQiV0(XQEnvBase):
         if terminated and not over:
             self._update_info()
 
-        self._render_gui(self.render_mode)
+        if self.render_mode in ["human", "rgb_array"]:
+            self._render_gui(self.render_mode)
 
         observation = self._get_obs()
 
@@ -497,7 +497,7 @@ class XiangQiV1(XQEnvBase):
         if terminated and not over:
             self._update_info()
 
-        if self.render_mode == "human":
+        if self.render_mode in ["human", "rgb_array"]:
             self._render_gui(self.render_mode)
 
         return observation, reward, terminated, truncated, self.satistics_info

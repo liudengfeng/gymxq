@@ -285,9 +285,6 @@ class Game:
                 # 去除前后符号
                 tip = output[1][:2]
                 reason = output[1].split("[")[1][:-1]
-            else:
-                tip = "步数超限判和"
-                reason = "步数超限"
         return (reward, tip, reason)
 
     def reset(self):
