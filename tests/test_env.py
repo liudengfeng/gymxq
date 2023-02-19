@@ -119,7 +119,7 @@ def test_vector_v1_1():
     # step 3 最大步数
     actions = [Game.move_string_to_action(move) for move in ["7978"]]
     # 自动reset恢复至初始状态
-    obs3, r3, t3, tr3, i3 = envs.step(actions)
+    _, r3, t3, tr3, i3 = envs.step(actions)
     f3 = i3["final_observation"][0]
     for k in f3.keys():
         np.testing.assert_array_equal(f3[k], obs0[k].ravel())
