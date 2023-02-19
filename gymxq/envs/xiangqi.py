@@ -93,7 +93,8 @@ class XQEnvBase(gym.Env):
 
         self.over_max_episode_steps = False
 
-        self._init_cn_qipu()
+        if self.gen_qp:
+            self._init_cn_qipu()
 
         self.ai_pi_tip = []
 
