@@ -87,24 +87,11 @@ class Game:
         # self.k = NUM_HISTORY if self.use_rule else 1
         self.k = 1
 
-        # 初始化列表
-        self._reward = 2
-        self._illegal_move = False
-        self.to_play_id_history = []
-        self.legal_actions_history = []
-        self.continuous_uneaten_history = []
-        self.pieces_history = []
-        self.action_history = []
-        self.reward_history = []
-
-        # TODO:暂时保留
-        self.child_visits = []
-        self.root_values = []
-
         self._reset()
 
     def _reset(self):
         # 初始化列表
+        self._reward = 2
         self._illegal_move = False  # 用于指示非法走子
         self.to_play_id_history = []
         self.continuous_uneaten_history = []
@@ -287,18 +274,20 @@ class Game:
         reason = ""
         reward = 0
         # 红方角度定义 [1：红胜, -1：红负, 0：平局]
-        if not self._illegal_move:
+        if self._illegal_move:
+            reward = -1 if self.player_id_ == RED_PLAYER else 1
+            tip = "红负" if self.player_id_ == RED_PLAYER else "红胜"
+            reason = "红方非法走子" if self.player_id_ == RED_PLAYER else "黑方非法走子"
+        else:
             termination = self.board.is_finished()
-            reward = self.board.reward() if termination else 0
             if termination:
                 output = self.board.game_result_string().split("（")
                 # 去除前后符号
                 tip = output[1][:2]
                 reason = output[1].split("[")[1][:-1]
-        else:
-            reward = -1 if self.player_id_ == RED_PLAYER else 1
-            tip = "红负" if self.player_id_ == RED_PLAYER else "红胜"
-            reason = "红方非法走子" if self.player_id_ == RED_PLAYER else "黑方非法走子"
+            else:
+                tip = "步数超限判和"
+                reason = "步数超限"
         return (reward, tip, reason)
 
     def reset(self):

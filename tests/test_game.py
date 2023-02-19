@@ -150,3 +150,41 @@ def test_stacked_feature(use_rule, expected_len):
                 assert np.count_nonzero(filled) == 0
             else:
                 assert np.count_nonzero(s) == 2 * 16 * l
+
+
+def test_step1():
+    # 红方非法走子判负
+    init_fen = "3ak1NrC/4a4/4b4/9/9/9/9/9/2p1r4/3K5 r - 118 0 297"
+    g = Game(init_fen, False)
+    obs = g.reset()
+    action = Game.move_string_to_action("0001")
+    s, r, t = g.step(action)
+    for k in obs.keys():
+        np.testing.assert_array_equal(obs[k], s[k])
+    assert r == -1
+    assert t
+
+
+def test_step2():
+    # 游戏已经结束时，继续执行移动不会影响最终结果
+    init_fen = "3ak1NrC/4a4/4b4/9/9/9/9/9/2p1r4/3K5 r - 118 0 297"
+    g = Game(init_fen, False)
+    obs = g.reset()
+    action = Game.move_string_to_action("8988")
+    s1, r, t = g.step(action)
+    assert r == 0
+    assert not t
+    action = Game.move_string_to_action("7978")
+    s2, r2, t = g.step(action)
+    assert (s1["s"] != s2["s"]).any()
+    assert r2 == 0
+    # 连续未吃子判和
+    assert t
+    assert g._reward == 0
+    # 非法走子不成立，因为游戏已经结束
+    action = Game.move_string_to_action("7978")
+    s3, r, t = g.step(action)
+    assert (s2["s"] == s3["s"]).all()
+    assert r == 0
+    # 连续未吃子判和
+    assert t

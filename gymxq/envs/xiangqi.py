@@ -91,8 +91,6 @@ class XQEnvBase(gym.Env):
         # We need the following line to seed self.np_random
         super().reset(seed=seed)
 
-        # episode steps
-        self.satistics_info["l"] = 0
         self.over_max_episode_steps = False
 
         self._init_cn_qipu()
@@ -104,7 +102,9 @@ class XQEnvBase(gym.Env):
             self._init_satistics_info()
 
         self.game.reset()
-        if self.render_mode != "ansi":
+        # episode steps
+        self.satistics_info["l"] = self.game.board.steps()
+        if self.render_mode in ["human", "rgb_array"]:
             self._render_gui(self.render_mode)
         observation = self._get_obs()
         return observation, self.satistics_info
@@ -168,7 +168,7 @@ class XQEnvBase(gym.Env):
             return np.transpose(
                 np.array(pygame.surfarray.pixels3d(self.window_surface)), axes=(1, 0, 2)
             )
-        else:
+        elif self.render_mode == "human":
             self._render_gui(self.render_mode)
 
     def last_move(self):
@@ -417,6 +417,9 @@ class XiangQiV0(XQEnvBase):
         )
 
     def step(self, action):
+        over = False
+        if self.game._reward != 2:
+            over = True
         truncated = False
         _, reward, terminated = self.game.step(action)
         # 走后清空
@@ -435,7 +438,7 @@ class XiangQiV0(XQEnvBase):
             qp = self.game.make_last_record()
             self.cn_qipu.append(qp)
 
-        if terminated:
+        if terminated and not over:
             self._update_info()
 
         self._render_gui(self.render_mode)
@@ -461,7 +464,7 @@ class XiangQiV1(XQEnvBase):
                     dtype=np.int8,
                 ),
                 "a": spaces.Box(-1, NUM_ACTIONS - 1, (k,), dtype=np.int16),
-                "continuous_uneaten": spaces.Discrete(MAX_NUM_NO_EAT, start=-1),
+                "continuous_uneaten": spaces.Discrete(MAX_NUM_NO_EAT, start=0),
                 "to_play": spaces.Discrete(NUM_PLAYER, start=1),
             }
         )
@@ -471,6 +474,9 @@ class XiangQiV1(XQEnvBase):
 
     def step(self, action):
         truncated = False
+        over = False
+        if self.game._reward != 2:
+            over = True
         observation, reward, terminated = self.game.step(action)
         # 走后清空
         self.ai_pi_tip = []
@@ -487,7 +493,7 @@ class XiangQiV1(XQEnvBase):
             qp = self.game.make_last_record()
             self.cn_qipu.append(qp)
 
-        if terminated:
+        if terminated and not over:
             self._update_info()
 
         if self.render_mode == "human":
