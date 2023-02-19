@@ -83,7 +83,55 @@ def test_vector_v0():
     assert observations.shape == (n, SCREEN_HEIGHT, SCREEN_WIDTH, 3)
 
 
-def test_vector_v1():
+def test_vector_v1_1():
+    # 测试矢量环境
+    n = 1
+    k = 1
+    init_fen = "3ak1NrC/4a4/4b4/9/9/9/9/9/2p1r4/3K5 r - 118 0 297"
+    envs = gymnasium.vector.make(
+        "gymxq/xqv1", init_fen=init_fen, gen_qp=False, num_envs=n
+    )
+    obs0, _ = envs.reset()
+    assert obs0["s"].shape == (n, k * NUM_ROW * NUM_COL)
+
+    key = "final_observation"
+    # step 1
+    actions = [Game.move_string_to_action(move) for move in ["8988"]]
+    obs1, r1, t1, tr1, i1 = envs.step(actions)
+    assert key not in i1.keys()
+    np.testing.assert_array_equal(r1, np.array([0]))
+    np.testing.assert_array_equal(t1, np.array([False]))
+    np.testing.assert_array_equal(tr1, np.array([False]))
+
+    # step 2 连续未吃子
+    actions = [Game.move_string_to_action(move) for move in ["7978"]]
+    obs2, r2, t2, tr2, i2 = envs.step(actions)
+    assert key in i2.keys()
+    f2 = i2["final_observation"]
+    o2 = f2[0]["s"]
+    # 最终状态
+    assert np.any(obs2["s"][0] != o2)
+    np.testing.assert_array_equal(r2, np.array([0]))
+    # 连续120着未吃子判和，游戏结束
+    np.testing.assert_array_equal(t2, np.array([True]))
+    np.testing.assert_array_equal(tr2, np.array([False]))
+
+    # step 3 最大步数
+    actions = [Game.move_string_to_action(move) for move in ["7978"]]
+    # 自动reset恢复至初始状态
+    obs3, r3, t3, tr3, i3 = envs.step(actions)
+    f3 = i3["final_observation"][0]
+    for k in f3.keys():
+        np.testing.assert_array_equal(f3[k], obs0[k].ravel())
+
+    # 矢量化环境重置后，继续执行，但此时视同重新开始新的棋局，非法移动
+    np.testing.assert_array_equal(r3, np.array([-1]))
+    np.testing.assert_array_equal(t3, np.array([True]))
+    # 重置后不会触及最大步数
+    np.testing.assert_array_equal(tr3, np.array([False]))
+
+
+def test_vector_v1_2():
     # 测试矢量环境
     n = 4
     k = 1
@@ -122,12 +170,7 @@ def test_vector_v1():
     actions = [
         Game.move_string_to_action(move) for move in ["6957", "2131", "7978", "4867"]
     ]
-    observations, rewards, termination, truncation, infos = envs.step(actions)
-    final_observation = infos["final_observation"]
-    # obs = final_observation[3]["s"]
-    # assert obs is None
-    # 矢量化环境失败
-    # np.testing.assert_array_equal(rewards, np.array([1, -1, 0, 0]))
+    _, rewards, termination, truncation, infos = envs.step(actions)
     np.testing.assert_array_equal(rewards, np.array([1, -1, -1, 0]))
     np.testing.assert_array_equal(termination, np.array([True, True, True, False]))
-    np.testing.assert_array_equal(truncation, np.array([False, False, False, True]))
+    np.testing.assert_array_equal(truncation, np.array([False, False, False, False]))

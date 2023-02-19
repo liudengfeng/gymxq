@@ -171,20 +171,19 @@ def test_step2():
     g = Game(init_fen, False)
     obs = g.reset()
     action = Game.move_string_to_action("8988")
-    s1, r, t = g.step(action)
-    assert r == 0
-    assert not t
+    s1, r1, t1 = g.step(action)
+    assert r1 == 0
+    assert not t1
     action = Game.move_string_to_action("7978")
-    s2, r2, t = g.step(action)
+    s2, r2, t2 = g.step(action)
     assert (s1["s"] != s2["s"]).any()
     assert r2 == 0
     # 连续未吃子判和
-    assert t
+    assert t2
     assert g._reward == 0
     # 非法走子不成立，因为游戏已经结束
     action = Game.move_string_to_action("7978")
-    s3, r, t = g.step(action)
+    s3, r3, t3 = g.step(action)
     assert (s2["s"] == s3["s"]).all()
-    assert r == 0
-    # 连续未吃子判和
-    assert t
+    assert r3 == 0
+    assert t3
