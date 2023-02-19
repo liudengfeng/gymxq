@@ -55,8 +55,10 @@ def test_resize_v0():
 
 def test_truncated():
     # 设置连续未吃子
-    init_fen = "3ak1NrC/4a4/4b4/9/9/9/9/9/2p1r4/3K5 r - 0 - 298"
+    # 注意 步数从1开始，实际步数为298
+    init_fen = "3ak1NrC/4a4/4b4/9/9/9/9/9/2p1r4/3K5 r - 0 - 299"
     actions = [Game.move_string_to_action(move) for move in ["8988", "7978"]]
+    
     truncation = False
     env0 = gymnasium.make("gymxq/xqv0", init_fen=init_fen)
     env0.reset()
