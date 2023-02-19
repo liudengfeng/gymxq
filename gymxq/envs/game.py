@@ -218,7 +218,7 @@ class Game:
                 True,
             )
         # 非法走子
-        if self._illegal_move or action not in self.legal_actions_history[-1]:
+        if self._illegal_move or (action not in self.legal_actions_history[-1]):
             self._illegal_move = True
             termination = True
             reward = -1 if self.player_id_ == RED_PLAYER else 1
