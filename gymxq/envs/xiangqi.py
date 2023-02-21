@@ -108,7 +108,12 @@ class XQEnvBase(gym.Env):
         if self.render_mode in ["human", "rgb_array"]:
             self._render_gui(self.render_mode)
         observation = self._get_obs()
-        return observation, self.satistics_info
+        info = self.satistics_info
+        info.update(
+            legal_actions=self.game.legal_actions_history[-1],
+            to_play=self.game.to_play_id_history[-1],
+        )
+        return observation, info
 
     def _get_obs(self):
         raise NotImplementedError()
@@ -445,8 +450,12 @@ class XiangQiV0(XQEnvBase):
             self._render_gui(self.render_mode)
 
         observation = self._get_obs()
-
-        return observation, reward, terminated, truncated, self.satistics_info
+        info = self.satistics_info
+        info.update(
+            legal_actions=self.game.legal_actions_history[-1],
+            to_play=self.game.to_play_id_history[-1],
+        )
+        return observation, reward, terminated, truncated, info
 
 
 class XiangQiV1(XQEnvBase):
@@ -499,5 +508,9 @@ class XiangQiV1(XQEnvBase):
 
         if self.render_mode in ["human", "rgb_array"]:
             self._render_gui(self.render_mode)
-
-        return observation, reward, terminated, truncated, self.satistics_info
+        info = self.satistics_info
+        info.update(
+            legal_actions=self.game.legal_actions_history[-1],
+            to_play=self.game.to_play_id_history[-1],
+        )
+        return observation, reward, terminated, truncated, info

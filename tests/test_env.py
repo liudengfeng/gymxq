@@ -14,16 +14,20 @@ from gymxq.constants import *
 def test_basic_v0():
     env = gymnasium.make("gymxq/xqv0")
     assert env.metadata["max_episode_steps"] == 300
-    obs, _ = env.reset()
+    obs, info = env.reset()
     assert obs.shape == (SCREEN_HEIGHT, SCREEN_WIDTH, 3)
+    assert info["to_play"] == 1
+    assert len(info["legal_actions"]) == 44
 
 
 def test_basic_v1():
     env = gymnasium.make("gymxq/xqv1")
     assert env.metadata["max_episode_steps"] == 300
-    obs, _ = env.reset()
+    obs, info = env.reset()
     k = 1
     assert obs["s"].shape == (k * NUM_ROW * NUM_COL,)
+    assert info["to_play"] == 1
+    assert len(info["legal_actions"]) == 44
 
 
 # def test_view_qipu_v0():
@@ -58,7 +62,7 @@ def test_truncated():
     # 注意 步数从1开始，实际步数为298
     init_fen = "3ak1NrC/4a4/4b4/9/9/9/9/9/2p1r4/3K5 r - 0 - 299"
     actions = [Game.move_string_to_action(move) for move in ["8988", "7978"]]
-    
+
     truncation = False
     env0 = gymnasium.make("gymxq/xqv0", init_fen=init_fen)
     env0.reset()
@@ -83,6 +87,8 @@ def test_vector_v0():
     actions = [Game.move_string_to_action(move) for move in ["4041", "1219", "1242"]]
     observations, rewards, termination, truncation, infos = envs.step(actions)
     assert observations.shape == (n, SCREEN_HEIGHT, SCREEN_WIDTH, 3)
+    assert len(infos["to_play"]) == n
+    assert len(infos["legal_actions"]) == n
 
 
 def test_vector_v1_1():
@@ -109,10 +115,17 @@ def test_vector_v1_1():
     actions = [Game.move_string_to_action(move) for move in ["7978"]]
     obs2, r2, t2, tr2, i2 = envs.step(actions)
     assert key in i2.keys()
-    f2 = i2["final_observation"]
-    o2 = f2[0]["s"]
-    # 最终状态
+    o2 = i2[key][0]["s"]
+    # print("\n", np.flipud(o2.reshape(10, 9)))
+    # print("\n", np.flipud(obs2["s"][0].reshape(10, 9)))
+    # print("\n", np.flipud(obs0["s"][0].reshape(10, 9)))
+    # print(i2["legal_actions"])
+    # 输出的状态为初始状态
+    for key in obs2.keys():
+        np.testing.assert_array_equal(obs2[key], obs0[key])
+    # 最终状态与输出状态不同
     assert np.any(obs2["s"][0] != o2)
+
     np.testing.assert_array_equal(r2, np.array([0]))
     # 连续120着未吃子判和，游戏结束
     np.testing.assert_array_equal(t2, np.array([True]))
@@ -126,7 +139,7 @@ def test_vector_v1_1():
     for k in f3.keys():
         np.testing.assert_array_equal(f3[k], obs0[k].ravel())
 
-    # 矢量化环境重置后，继续执行，但此时视同重新开始新的棋局，非法移动
+    # 矢量化环境重置后视同重新开始新的棋局，非法移动
     np.testing.assert_array_equal(r3, np.array([-1]))
     np.testing.assert_array_equal(t3, np.array([True]))
     # 重置后不会触及最大步数
