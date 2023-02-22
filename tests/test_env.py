@@ -6,13 +6,13 @@ import pytest
 from gymnasium.wrappers.resize_observation import ResizeObservation
 from PIL import Image
 
-import gymxq
+# import gymxq
 from gymxq.game import Game
 from gymxq.constants import *
 
 
 def test_basic_v0():
-    env = gymnasium.make("gymxq/xqv0")
+    env = gymnasium.make("xqv0")
     assert env.metadata["max_episode_steps"] == 300
     obs, info = env.reset()
     assert obs.shape == (SCREEN_HEIGHT, SCREEN_WIDTH, 3)
@@ -21,7 +21,7 @@ def test_basic_v0():
 
 
 def test_basic_v1():
-    env = gymnasium.make("gymxq/xqv1")
+    env = gymnasium.make("xqv1")
     assert env.metadata["max_episode_steps"] == 300
     obs, info = env.reset()
     k = 1
@@ -31,7 +31,7 @@ def test_basic_v1():
 
 
 # def test_view_qipu_v0():
-#     env = gymnasium.make("gymxq/xqv0", gen_qp=True)
+#     env = gymnasium.make("xqv0", gen_qp=True, render_mode="human")
 #     obs, _ = env.reset()
 #     while True:
 #         action = env.sample_action()
@@ -44,7 +44,7 @@ def test_basic_v1():
 
 
 def test_resize_v0():
-    env = gymnasium.make("gymxq/xqv0", gen_qp=False)
+    env = gymnasium.make("xqv0", gen_qp=False)
     H, W = 300, 270
     env = ResizeObservation(env, (H, W))
     obs, _ = env.reset()
@@ -64,14 +64,14 @@ def test_truncated():
     actions = [Game.move_string_to_action(move) for move in ["8988", "7978"]]
 
     truncation = False
-    env0 = gymnasium.make("gymxq/xqv0", init_fen=init_fen)
+    env0 = gymnasium.make("xqv0", init_fen=init_fen)
     env0.reset()
     for action in actions:
         _, _, _, truncation, _ = env0.step(action)
     assert truncation
 
     truncation = False
-    env1 = gymnasium.make("gymxq/xqv1", init_fen=init_fen)
+    env1 = gymnasium.make("xqv1", init_fen=init_fen)
     env1.reset()
     for action in actions:
         _, _, _, truncation, _ = env1.step(action)
@@ -81,7 +81,7 @@ def test_truncated():
 def test_vector_v0():
     # 测试矢量环境
     n = 3
-    envs = gymnasium.vector.make("gymxq/xqv0", gen_qp=False, num_envs=n)
+    envs = gymnasium.vector.make("xqv0", gen_qp=False, num_envs=n)
     obs, _ = envs.reset()
     assert obs.shape == (n, SCREEN_HEIGHT, SCREEN_WIDTH, 3)
     actions = [Game.move_string_to_action(move) for move in ["4041", "1219", "1242"]]
@@ -96,9 +96,7 @@ def test_vector_v1_1():
     n = 1
     k = 1
     init_fen = "3ak1NrC/4a4/4b4/9/9/9/9/9/2p1r4/3K5 r - 118 0 297"
-    envs = gymnasium.vector.make(
-        "gymxq/xqv1", init_fen=init_fen, gen_qp=False, num_envs=n
-    )
+    envs = gymnasium.vector.make("xqv1", init_fen=init_fen, gen_qp=False, num_envs=n)
     obs0, _ = envs.reset()
     assert obs0["s"].shape == (n, k * NUM_ROW * NUM_COL)
 
@@ -151,9 +149,7 @@ def test_vector_v1_2():
     n = 4
     k = 1
     init_fen = "3ak1NrC/4a4/4b4/9/9/9/9/9/2p1r4/3K5 r - 118 0 297"
-    envs = gymnasium.vector.make(
-        "gymxq/xqv1", init_fen=init_fen, gen_qp=False, num_envs=n
-    )
+    envs = gymnasium.vector.make("xqv1", init_fen=init_fen, gen_qp=False, num_envs=n)
     obs, _ = envs.reset()
     assert obs["s"].shape == (n, k * NUM_ROW * NUM_COL)
 

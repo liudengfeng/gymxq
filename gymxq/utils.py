@@ -6,7 +6,8 @@ import pygame
 import six
 from io import StringIO
 import xqcpp
-from importlib.resources import files
+
+# from importlib.resources import files
 from contextlib import closing
 from .constants import (
     BOARD_NUM_PROMPT,
@@ -34,8 +35,8 @@ COLOR2NUM = dict(
 
 
 def load_image(name):
-    # fullname = os.path.join(os.path.dirname(__file__), "resources/{}".format(name))
-    fullname = files("gymxq.envs.resources").joinpath(name)
+    fullname = os.path.join(os.path.dirname(__file__), "resources/{}".format(name))
+    # fullname = files("gymxq.resources").joinpath(name)
     return pygame.image.load(fullname)
 
 

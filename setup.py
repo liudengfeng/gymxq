@@ -5,9 +5,7 @@ setup(
     version="1.0.0",
     packages=find_packages(
         # All keyword arguments below are optional:
-        where="gymxq",  # '.' by default
-        include=("*",),
-        exclude=["tests_*", "assets/"],  # empty by default
+        exclude=["tests", "assets"],  # empty by default
     ),
     # include_package_data=True,
     install_requires=[
