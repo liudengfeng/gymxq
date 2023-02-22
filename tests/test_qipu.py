@@ -1,10 +1,8 @@
 import pytest
-from gymxq import Game
-from gymxq.utils import (
-    front_and_back_tag,
-    make_last_move_qipu,
-)
+
 from gymxq.constants import *
+from gymxq.game import Game
+from gymxq.utils import front_and_back_tag, make_last_move_qipu
 
 
 @pytest.mark.parametrize(

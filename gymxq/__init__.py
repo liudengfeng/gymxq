@@ -1,18 +1,18 @@
 from gymnasium.envs.registration import register
-from .envs.game import Game, game_feature_shape, encoded_action
+from .game import Game, game_feature_shape, encoded_action
 from .utils import move_to_coordinate
 
 register(
-    id="gymxq/xqv0",
-    entry_point="gymxq.envs:XiangQiV0",
+    id="xqv0",
+    entry_point="gymxq.xiangqi:XiangQiV0",
     max_episode_steps=300,
     # order_enforce=False,
     # disable_env_checker=True,
 )
 
 register(
-    id="gymxq/xqv1",
-    entry_point="gymxq.envs:XiangQiV1",
+    id="xqv1",
+    entry_point="gymxq.xiangqi:XiangQiV1",
     max_episode_steps=300,
     # order_enforce=False,
     # disable_env_checker=True,

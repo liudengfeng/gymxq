@@ -2,7 +2,8 @@ import numpy as np
 import pytest
 import xqcpp
 
-from gymxq import Game, encoded_action, move_to_coordinate
+from gymxq.game import Game, encoded_action
+from gymxq.utils import move_to_coordinate
 from gymxq.constants import *
 
 

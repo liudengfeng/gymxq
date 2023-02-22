@@ -8,15 +8,15 @@ import numpy as np
 import pygame
 from gymnasium import spaces
 
-from gymxq.constants import *
-from gymxq.envs.game import Game
-from gymxq.utils import (
+from .constants import *
+from .utils import (
     get_center,
     get_piece_png_file,
     load_image,
     move_to_coordinate,
     render_board_to_text,
 )
+from .game import Game
 
 
 class XQEnvBase(gym.Env):

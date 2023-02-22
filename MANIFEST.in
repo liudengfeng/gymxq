@@ -1,2 +1,2 @@
-include gymxq/envs/resources/*.png
-include gymxq/envs/resources/*.ico
+include gymxq/resources/*.png
+include gymxq/resources/*.ico

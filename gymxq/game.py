@@ -4,7 +4,7 @@ from typing import List, Optional
 
 import numpy as np
 import xqcpp
-from gymxq.constants import (
+from .constants import (
     NUM_ROW,
     NUM_COL,
     NUM_PIECE,
@@ -14,7 +14,7 @@ from gymxq.constants import (
     RED_PLAYER,
     BLACK_PLAYER,
 )
-from gymxq.utils import move_to_coordinate, make_last_move_qipu
+from .utils import move_to_coordinate, make_last_move_qipu
 
 
 def get_init_board(init_fen: Optional[str], use_rule: bool):

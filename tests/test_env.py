@@ -7,7 +7,7 @@ from gymnasium.wrappers.resize_observation import ResizeObservation
 from PIL import Image
 
 import gymxq
-from gymxq import Game
+from gymxq.game import Game
 from gymxq.constants import *
 
 
