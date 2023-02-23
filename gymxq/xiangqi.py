@@ -124,10 +124,12 @@ class XQEnvBase(gym.Env):
         Returns:
             int: action
         """
-        action = self.action_space.sample()
-        while action not in self.game.legal_actions_history[-1]:
-            action = self.action_space.sample()
-        return action
+        mask = np.zeros(self.action_space.n, dtype=np.int8)
+        valids = self.game.legal_actions_history[-1]
+        if len(valids):
+            mask[valids] = 1
+            return self.action_space.sample()
+        return -1
 
     def set_ai_top(self, pi: dict):
         """设置AI提示信息
