@@ -456,6 +456,8 @@ class XiangQiV0(XQEnvBase):
         info.update(
             legal_actions=self.game.legal_actions_history[-1],
             to_play=self.game.to_play_id_history[-1],
+            # 适应 EnvCompatibility
+            truncated=truncated,
         )
         return observation, reward, terminated, truncated, info
 
@@ -514,5 +516,7 @@ class XiangQiV1(XQEnvBase):
         info.update(
             legal_actions=self.game.legal_actions_history[-1],
             to_play=self.game.to_play_id_history[-1],
+            # 适应 EnvCompatibility
+            truncated=truncated,
         )
         return observation, reward, terminated, truncated, info
