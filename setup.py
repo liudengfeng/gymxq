@@ -5,9 +5,9 @@ setup(
     version="1.0.0",
     packages=find_packages(
         # All keyword arguments below are optional:
-        exclude=["tests", "assets"],  # empty by default
+        exclude=["tests", "assets", "report.html"],  # empty by default
     ),
-    # include_package_data=True,
+    include_package_data=True,
     install_requires=[
         "xqcpp>=1.0.0",
         "gymnasium>=0.27.0",
