@@ -99,9 +99,9 @@ def test_stacked_feature(use_rule, expected_len):
     np.testing.assert_array_equal(g.pieces_history[-1], s0)
 
     # 测试 index = -1
-    s, a = g.get_stacked_feature(-1)
+    s, a = g.get_state_action(-1)
     assert s.dtype == np.int8 and s.shape == (expected_len * NUM_ROW * NUM_COL,)
-    assert a.dtype == np.int16 and a.shape == (expected_len,)
+    # assert a.dtype == np.int16 and a.shape == (expected_len,)
 
     # g.board.show_board()
 
@@ -137,8 +137,9 @@ def test_stacked_feature(use_rule, expected_len):
         assert s.dtype == np.int8 and s.shape == (l * NUM_ROW * NUM_COL,)
         np.testing.assert_array_equal(g.pieces_history[-1], g.feature_pieces())
 
-        assert a.dtype == np.int16 and a.shape == (l,)
-        assert a[-1].item() == g.move_string_to_action(moves[i - 1])
+        # assert a.dtype == np.int16 and a.shape == (l,)
+        # assert a[-1].item() == g.move_string_to_action(moves[i - 1])
+        assert a == g.move_string_to_action(moves[i - 1])
 
         if use_rule:
             if i < l:

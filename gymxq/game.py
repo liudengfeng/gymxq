@@ -206,7 +206,7 @@ class Game:
     def step(self, action):
         # 吸收状态
         if self._reward != 2:
-            s, a = self.get_stacked_feature(len(self.reward_history))
+            s, a = self.get_state_action(len(self.reward_history))
             return (
                 {
                     "s": s,
@@ -223,7 +223,7 @@ class Game:
             termination = True
             reward = -1 if self.player_id_ == RED_PLAYER else 1
             self._reward = reward
-            s, a = self.get_stacked_feature(len(self.reward_history))
+            s, a = self.get_state_action(len(self.reward_history))
             # self.board.show_board(True, "非法走子{}".format(self.action_to_move_string(action)))
             return (
                 {
@@ -257,7 +257,7 @@ class Game:
 
         # next batch
         self._append_for_next_batch()
-        s, a = self.get_stacked_feature(len(self.reward_history))
+        s, a = self.get_state_action(len(self.reward_history))
         return (
             {
                 "s": s,
@@ -289,7 +289,7 @@ class Game:
 
     def reset(self):
         self._reset()
-        s, a = self.get_stacked_feature(0)
+        s, a = self.get_state_action(0)
         return {
             "s": s,
             "a": a,
@@ -297,24 +297,24 @@ class Game:
             "to_play": self.to_play_id_history[-1],
         }
 
-    def get_stacked_feature(self, idx: int = 0):
+    def get_state_action(self, idx: int = 0):
         """获取指定序号的编码特征
 
         Args:
             idx (int, optional): 序号. Defaults to 0.
 
         Returns:
-            ndarray: 特征编码数组
+            ndarray,int: (特征编码数组,action)
         """
         max_idx = len(self.reward_history)
         if idx == -1:
-            return self.get_stacked_feature(max_idx)
+            return self.get_state_action(max_idx)
         assert idx >= 0 and idx <= max_idx, "idx有效范围{}~{},无效输入{}".format(
             0, max_idx, idx
         )
         s = self.pieces_history[idx : idx + self.k]
         a = self.action_history[idx : idx + self.k]
-        return np.concatenate(s, dtype=np.int8), np.array(a, dtype=np.int16)
+        return np.concatenate(s, dtype=np.int8), a[0]
 
     def to_play(self) -> int:
         return self.player_id_
