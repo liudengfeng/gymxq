@@ -10,6 +10,7 @@ from .constants import (
     NUM_PIECE,
     NUM_HISTORY,
     MAX_NUM_NO_EAT,
+    NUM_ACTIONS,
     NUM_PLAYER,
     RED_PLAYER,
     BLACK_PLAYER,
@@ -83,10 +84,6 @@ class Game:
     def __init__(self, init_fen: Optional[str], use_rule: bool):
         self.init_fen = init_fen
         self.use_rule = use_rule
-        # 使用GameHistory表达堆积
-        # self.k = NUM_HISTORY if self.use_rule else 1
-        self.k = 1
-
         self._reset()
 
     def _reset(self):
@@ -95,16 +92,11 @@ class Game:
         self._illegal_move = False  # 用于指示非法走子
         self.to_play_id_history = []
         self.continuous_uneaten_history = []
-        # self.to_eat_history = []
         self.legal_actions_history = []
 
         self.pieces_history = []
         self.action_history = []
         self.reward_history = []
-
-        # TODO:暂时保留
-        self.child_visits = []
-        self.root_values = []
 
         self.board = get_init_board(self.init_fen, self.use_rule)
         # next_player 为整数 1 代表红方 2 代表黑方
@@ -115,17 +107,10 @@ class Game:
 
         self._append_for_next_batch()
 
-        # 中国象棋需要观察历史18着
-        # 设置不需要检查重复时，只使用当前状态，不堆积历史
         piece_filled = np.zeros(NUM_ROW * NUM_COL, dtype=np.uint8)
-        # 历史 S A
-        # T - 1
-        for _ in range(self.k - 1):
-            self.pieces_history.append(piece_filled)
-            # 注意填充`-1`
-            self.action_history.append(-1)
 
-        self.action_history.append(-1)
+        # 注意填充 2086 代表空白
+        self.action_history.append(NUM_ACTIONS)
         # 初始状态
         s0 = self.feature_pieces()
         self.pieces_history.append(s0)
@@ -206,7 +191,8 @@ class Game:
     def step(self, action):
         # 吸收状态
         if self._reward != 2:
-            s, a = self.get_state_action(len(self.reward_history))
+            s = self.pieces_history[len(self.reward_history)]
+            a = self.action_history[-1]
             return (
                 {
                     "s": s,
@@ -223,8 +209,8 @@ class Game:
             termination = True
             reward = -1 if self.player_id_ == RED_PLAYER else 1
             self._reward = reward
-            s, a = self.get_state_action(len(self.reward_history))
-            # self.board.show_board(True, "非法走子{}".format(self.action_to_move_string(action)))
+            s = self.pieces_history[len(self.reward_history)]
+            a = self.action_history[-1]
             return (
                 {
                     "s": s,
@@ -257,11 +243,12 @@ class Game:
 
         # next batch
         self._append_for_next_batch()
-        s, a = self.get_state_action(len(self.reward_history))
+        s = self.pieces_history[len(self.reward_history)]
+        # s, a = self.get_state_action(len(self.reward_history))
         return (
             {
                 "s": s,
-                "a": a,
+                "a": action,
                 "continuous_uneaten": self.continuous_uneaten_history[-1],
                 "to_play": self.to_play_id_history[-1],
             },
@@ -289,32 +276,14 @@ class Game:
 
     def reset(self):
         self._reset()
-        s, a = self.get_state_action(0)
+        s = self.pieces_history[-1]
+        a = self.action_history[-1]
         return {
             "s": s,
             "a": a,
             "continuous_uneaten": self.continuous_uneaten_history[-1],
             "to_play": self.to_play_id_history[-1],
         }
-
-    def get_state_action(self, idx: int = 0):
-        """获取指定序号的编码特征
-
-        Args:
-            idx (int, optional): 序号. Defaults to 0.
-
-        Returns:
-            ndarray,int: (特征编码数组,action)
-        """
-        max_idx = len(self.reward_history)
-        if idx == -1:
-            return self.get_state_action(max_idx)
-        assert idx >= 0 and idx <= max_idx, "idx有效范围{}~{},无效输入{}".format(
-            0, max_idx, idx
-        )
-        s = self.pieces_history[idx : idx + self.k]
-        a = self.action_history[idx : idx + self.k]
-        return np.concatenate(s, dtype=np.int8), a[0]
 
     def to_play(self) -> int:
         return self.player_id_

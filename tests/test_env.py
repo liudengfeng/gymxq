@@ -24,8 +24,7 @@ def test_basic_v1():
     env = gymnasium.make("xqv1")
     assert env.metadata["max_episode_steps"] == 300
     obs, info = env.reset()
-    k = 1
-    assert obs["s"].shape == (k * NUM_ROW * NUM_COL,)
+    assert obs["s"].shape == (NUM_ROW * NUM_COL,)
     assert info["to_play"] == 1
     assert len(info["legal_actions"]) == 44
 
@@ -94,11 +93,10 @@ def test_vector_v0():
 def test_vector_v1_1():
     # 测试矢量环境
     n = 1
-    k = 1
     init_fen = "3ak1NrC/4a4/4b4/9/9/9/9/9/2p1r4/3K5 r - 118 0 297"
     envs = gymnasium.vector.make("xqv1", init_fen=init_fen, gen_qp=False, num_envs=n)
     obs0, _ = envs.reset()
-    assert obs0["s"].shape == (n, k * NUM_ROW * NUM_COL)
+    assert obs0["s"].shape == (n, NUM_ROW * NUM_COL)
 
     key = "final_observation"
     # step 1
@@ -147,11 +145,10 @@ def test_vector_v1_1():
 def test_vector_v1_2():
     # 测试矢量环境
     n = 4
-    k = 1
     init_fen = "3ak1NrC/4a4/4b4/9/9/9/9/9/2p1r4/3K5 r - 118 0 297"
     envs = gymnasium.vector.make("xqv1", init_fen=init_fen, gen_qp=False, num_envs=n)
     obs, _ = envs.reset()
-    assert obs["s"].shape == (n, k * NUM_ROW * NUM_COL)
+    assert obs["s"].shape == (n, NUM_ROW * NUM_COL)
 
     # step 1
     actions = [

@@ -85,13 +85,12 @@ def test_init_game(
 )
 def test_stacked_feature(use_rule, expected_len):
     g = Game("", use_rule)
-    assert g.k == expected_len
     # 定义对象本身为空
     assert len(g) == 0
 
     assert len(g.action_history) == expected_len
-    # 填充 -1
-    assert all([a == -1 for a in g.action_history])
+    # 填充
+    assert all([a is NUM_ACTIONS for a in g.action_history])
 
     assert len(g.pieces_history) == expected_len
 
@@ -99,9 +98,11 @@ def test_stacked_feature(use_rule, expected_len):
     np.testing.assert_array_equal(g.pieces_history[-1], s0)
 
     # 测试 index = -1
-    s, a = g.get_state_action(-1)
+    s = g.pieces_history[len(g.reward_history)]
+    a = g.action_history[-1]
     assert s.dtype == np.int8 and s.shape == (expected_len * NUM_ROW * NUM_COL,)
-    # assert a.dtype == np.int16 and a.shape == (expected_len,)
+    # pre action
+    assert a is NUM_ACTIONS
 
     # g.board.show_board()
 

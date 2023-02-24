@@ -33,7 +33,7 @@ class XQEnvBase(gym.Env):
         use_rule: bool = False,
         gen_qp: bool = False,
     ):
-        self.action_space = spaces.Discrete(NUM_ACTIONS + 1, start=-1)
+        self.action_space = spaces.Discrete(NUM_ACTIONS + 1)
         assert render_mode is None or render_mode in self.metadata["render_modes"]
         self.render_mode = render_mode
         self.reward_range = (-1.0, 1.0)
@@ -129,7 +129,7 @@ class XQEnvBase(gym.Env):
         if len(valids):
             mask[valids] = 1
             return self.action_space.sample(mask)
-        return -1
+        return None
 
     def set_ai_top(self, pi: dict):
         """设置AI提示信息
@@ -183,7 +183,7 @@ class XQEnvBase(gym.Env):
         actions = self.game.action_history
         if len(actions) >= 1:
             action = actions[-1]
-            if action != -1:
+            if action != NUM_ACTIONS:
                 return self.game.action_to_move_string(action)
         return None
 
@@ -466,18 +466,16 @@ class XiangQiV1(XQEnvBase):
     """观察为编码对象"""
 
     def _make_observation_space(self):
-        # k = NUM_HISTORY if self.use_rule else 1
-        k = 1
         self.observation_space = spaces.Dict(
             {
                 # [a,b]
                 "s": spaces.Box(
                     -NUM_PIECE,
                     NUM_PIECE,
-                    (k * NUM_ROW * NUM_COL,),
+                    (NUM_ROW * NUM_COL,),
                     dtype=np.int8,
                 ),
-                "a": spaces.Discrete(NUM_ACTIONS + 1, start=-1),
+                "a": spaces.Discrete(NUM_ACTIONS + 1),
                 "continuous_uneaten": spaces.Discrete(MAX_NUM_NO_EAT, start=0),
                 "to_play": spaces.Discrete(NUM_PLAYER, start=1),
             }
