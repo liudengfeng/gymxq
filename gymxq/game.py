@@ -196,7 +196,7 @@ class Game:
             return (
                 {
                     "s": s,
-                    "a": a,
+                    "last_a": a,
                     "continuous_uneaten": self.continuous_uneaten_history[-1],
                     "to_play": self.to_play_id_history[-1],
                 },
@@ -214,7 +214,7 @@ class Game:
             return (
                 {
                     "s": s,
-                    "a": a,
+                    "last_a": a,
                     "continuous_uneaten": self.continuous_uneaten_history[-1],
                     "to_play": self.to_play_id_history[-1],
                 },
@@ -240,11 +240,11 @@ class Game:
         # next batch
         self._append_for_next_batch()
         s = self.pieces_history[len(self.reward_history)]
-        # s, a = self.get_state_action(len(self.reward_history))
+        # 务必将移动列入观察对象，用其表达是否吃子
         return (
             {
                 "s": s,
-                "a": action,
+                "last_a": action,
                 "continuous_uneaten": self.continuous_uneaten_history[-1],
                 "to_play": self.to_play_id_history[-1],
             },
@@ -276,7 +276,7 @@ class Game:
         a = self.action_history[-1]
         return {
             "s": s,
-            "a": a,
+            "last_a": a,
             "continuous_uneaten": self.continuous_uneaten_history[-1],
             "to_play": self.to_play_id_history[-1],
         }

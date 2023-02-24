@@ -128,7 +128,7 @@ def test_stacked_feature(use_rule, expected_len):
         assert not done
         assert reward == 0
         s = obs["s"]
-        a = obs["a"]
+        a = obs["last_a"]
         uneaten = obs["continuous_uneaten"]
         to_play = obs["to_play"]
         assert to_play == RED_PLAYER if i % 2 == 0 else BLACK_PLAYER
