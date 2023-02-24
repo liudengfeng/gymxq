@@ -66,7 +66,7 @@ def encoded_action(action: int, lr: bool = False):
         ndarray: np.ndarray(2,10,9)
     """
     res = np.zeros((2, NUM_ROW, NUM_COL), dtype=np.uint8)
-    if action == -1:
+    if action == NUM_ACTIONS:
         return res
     else:
         move = xqcpp.action2movestr(action)
@@ -158,7 +158,7 @@ class Game:
         """
         if self._illegal_move:
             return "非法走子"
-        if len(self.action_history) >= 1 and self.action_history[-1] != -1:
+        if len(self.action_history) >= 1 and self.action_history[-1] != NUM_ACTIONS:
             qp = make_last_move_qipu(
                 self.board, self.action_to_move_string(self.action_history[-1])
             )
@@ -229,12 +229,8 @@ class Game:
         reward = self.board.reward() if termination else 0
         if termination:
             self._reward = reward
-        # reward始终以当前走子方角度来修正，即当前走子方胜得分1，负得分-1，否则为0
-        # Final outcomes {lose, draw, win} in board games are treated as reward_history ut ∈ {−1, 0, +1}
-        # reward *= 1 if self.player_id_ == RED_PLAYER else -1
-        # assert reward != -1, "不可能存在自杀移动"
 
-        # 更新走子方，务必在符号修正之后
+        # 更新走子方
         self.player_id_ = self.board.next_player()
 
         self.action_history.append(action)
