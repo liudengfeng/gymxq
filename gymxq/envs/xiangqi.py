@@ -38,7 +38,7 @@ class XQEnvBase(gym.Env):
         use_rule: bool = False,
         gen_qp: bool = False,
     ):
-        self.action_space = spaces.Discrete(NUM_ACTIONS + 1)
+        self.action_space = spaces.Discrete(NUM_ACTIONS + 1, start=-1)
         assert render_mode is None or render_mode in self.metadata["render_modes"]
         self.render_mode = render_mode
         self.reward_range = (-1.0, 1.0)
@@ -188,7 +188,7 @@ class XQEnvBase(gym.Env):
         actions = self.game.action_history
         if len(actions) >= 1:
             action = actions[-1]
-            if action != NUM_ACTIONS:
+            if action != -1:
                 return self.game.action_to_move_string(action)
         return None
 
@@ -481,10 +481,10 @@ class XiangQiV1(XQEnvBase):
                 "s": spaces.Box(
                     -NUM_PIECE,
                     NUM_PIECE,
-                    (NUM_ROW * NUM_COL,),
+                    (NUM_ROW, NUM_COL),
                     dtype=np.int8,
                 ),
-                "last_a": spaces.Discrete(NUM_ACTIONS + 1),
+                "last_a": spaces.Discrete(NUM_ACTIONS + 1, start=-1),
                 "continuous_uneaten": spaces.Discrete(MAX_NUM_NO_EAT + 1, start=0),
                 "to_play": spaces.Discrete(NUM_PLAYER, start=1),
             }
