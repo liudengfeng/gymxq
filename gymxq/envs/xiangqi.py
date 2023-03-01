@@ -179,6 +179,7 @@ class XQEnvBase(gym.Env):
         if self.render_mode == "ansi":
             return render_board_to_text(self.game.board, self.last_move(), None)
         elif self.render_mode == "rgb_array":
+            self._render_gui("rgb_array")
             return np.transpose(
                 np.array(pygame.surfarray.pixels3d(self.window_surface)), axes=(1, 0, 2)
             )
@@ -342,6 +343,8 @@ class XQEnvBase(gym.Env):
             self._draw_cell(self.cross_image, x0, y0)
 
     def _render_gui(self, mode):
+        if self.render_mode not in ("human", "rgb_array"):
+            return
         try:
             import pygame
         except ImportError as e:
@@ -488,6 +491,17 @@ class XiangQiV1(XQEnvBase):
             }
         )
 
+    def render(self):
+        if self.render_mode == "ansi":
+            return render_board_to_text(self.game.board, self.last_move(), None)
+        elif self.render_mode == "rgb_array":
+            self._render_gui("rgb_array")
+            return np.transpose(
+                np.array(pygame.surfarray.pixels3d(self.window_surface)), axes=(1, 0, 2)
+            )
+        elif self.render_mode == "human":
+            self._render_gui(self.render_mode)
+
     def _get_obs(self):
         return self.game.reset()
 
@@ -513,9 +527,6 @@ class XiangQiV1(XQEnvBase):
 
         if terminated and not over:
             self._update_info()
-
-        if self.render_mode in ["human", "rgb_array"]:
-            self._render_gui(self.render_mode)
 
         info = self.satistics_info
         info.update(
