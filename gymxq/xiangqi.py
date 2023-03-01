@@ -315,6 +315,9 @@ class XQEnvBase(gym.Env):
                 self._draw_text(cn_move, (self.wc2, hi), False)
                 self._draw_text("{:.2f}".format(v), (self.wc3, hi), False)
 
+            # 显示后清空
+            self.ai_pi_tip = []
+
     def _draw_pieces(self):
         # 绘制棋子
         pieces = self.game.board.get_pieces()
@@ -490,8 +493,7 @@ class XiangQiV1(XQEnvBase):
         if self.game._reward != 2:
             over = True
         observation, reward, terminated = self.game.step(action)
-        # 走后清空
-        self.ai_pi_tip = []
+
         self.satistics_info["l"] += 1
         if (
             not terminated
