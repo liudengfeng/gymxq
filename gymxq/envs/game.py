@@ -109,8 +109,8 @@ class Game:
 
         piece_filled = np.zeros(NUM_ROW * NUM_COL, dtype=np.uint8)
 
-        # 注意填充 -1 代表空白
-        self.action_history.append(-1)
+        # 注意填充 NUM_ACTIONS 代表空白
+        self.action_history.append(NUM_ACTIONS)
         # 初始状态
         s0 = self.feature_pieces()
         self.pieces_history.append(s0)
@@ -158,7 +158,7 @@ class Game:
         """
         if self._illegal_move:
             return "非法走子"
-        if len(self.action_history) >= 1 and self.action_history[-1] != -1:
+        if len(self.action_history) >= 1 and self.action_history[-1] != NUM_ACTIONS:
             qp = make_last_move_qipu(
                 self.board, self.action_to_move_string(self.action_history[-1])
             )

@@ -38,7 +38,7 @@ class XQEnvBase(gym.Env):
         use_rule: bool = False,
         gen_qp: bool = False,
     ):
-        self.action_space = spaces.Discrete(NUM_ACTIONS + 1, start=-1)
+        self.action_space = spaces.Discrete(NUM_ACTIONS + 1)
         assert render_mode is None or render_mode in self.metadata["render_modes"]
         self.render_mode = render_mode
         self.reward_range = (-1.0, 1.0)
@@ -136,24 +136,26 @@ class XQEnvBase(gym.Env):
             return self.action_space.sample(mask)
         return None
 
-    def set_ai_top(self, pi: dict):
+    def set_ai_top(self, tip):
         """设置AI提示信息
 
         Args:
-            pi (dict): 政策字典
+            tip (可迭代): 政策、状态值
+
+        Notes:
+            1. 输入格式 [(k1,v1,v2),(k2,v1,v2),...]
+            2. v1代表政策，v2代表状态值
+            3. 按v1值降序排列
         """
-        assert pi, "输入政策不得为空"
-        tip = {}
-        keys = list(pi.keys())
+        assert tip, "提示不得为空"
+        assert all(len(a) == 3 for a in tip), "每项提示必须为键、值、值三元素"
         # 转换为 move str
-        if isinstance(keys[0], int):
-            tip = {self.game.action_to_move_string(k): v for k, v in pi.items()}
+        if isinstance(tip[0][0], int):
+            tip = [(self.game.action_to_move_string(k), v1, v2) for k, v1, v2 in tip]
         else:
-            assert isinstance(keys[0], str), "输入政策键要么为整数、要么为代表移动的四位数字符串"
-            tip = pi
-        # 按值降序排列 -> [(k,v),(k,v)]
+            assert isinstance(tip[0][0], str), "输入政策键要么为整数、要么为代表移动的四位数字符串"
         # top 10
-        self.ai_pi_tip = sorted(tip.items(), key=lambda x: x[1], reverse=True)[:10]
+        self.ai_pi_tip = sorted(tip, key=lambda x: x[1], reverse=True)[:10]
 
     def _update_info(self):
         self.satistics_info["total"] += 1
@@ -188,7 +190,7 @@ class XQEnvBase(gym.Env):
         actions = self.game.action_history
         if len(actions) >= 1:
             action = actions[-1]
-            if action != -1:
+            if action != NUM_ACTIONS:
                 return self.game.action_to_move_string(action)
         return None
 
@@ -311,15 +313,16 @@ class XQEnvBase(gym.Env):
             h_offset = 10
             self._draw_text("AI提示", (self.w_s + w_offset, h_s), True)
             hi = h_s + h * 1 + h_offset
-            self._draw_text("移动", (self.wc1, hi), False)
-            self._draw_text("记谱", (self.wc2, hi), False)
-            self._draw_text("分值", (self.wc3, hi), False)
-            for i, (k, v) in enumerate(self.ai_pi_tip, 1):
+            self._draw_text("记谱", (self.wc1, hi), False)
+            self._draw_text("政策", (self.wc2, hi), False)
+            self._draw_text("状态", (self.wc3, hi), False)
+            for i, (k, v1, v2) in enumerate(self.ai_pi_tip, 1):
                 hi = h_s + h * (i + 1) + h_offset
-                self._draw_text(k, (self.wc1, hi), False)
                 cn_move = self.game.gen_qp(k)
-                self._draw_text(cn_move, (self.wc2, hi), False)
-                self._draw_text("{:.2f}".format(v), (self.wc3, hi), False)
+                # self._draw_text(k, (self.wc1, hi), False)
+                self._draw_text(cn_move, (self.wc1, hi), False)
+                self._draw_text("{:.2f}".format(v1), (self.wc2, hi), False)
+                self._draw_text("{:.2f}".format(v2), (self.wc3, hi), False)
 
             # 显示后清空
             self.ai_pi_tip = []
@@ -484,7 +487,7 @@ class XiangQiV1(XQEnvBase):
                     (NUM_ROW, NUM_COL),
                     dtype=np.int8,
                 ),
-                "last_a": spaces.Discrete(NUM_ACTIONS + 1, start=-1),
+                "last_a": spaces.Discrete(NUM_ACTIONS + 1),
                 "continuous_uneaten": spaces.Discrete(MAX_NUM_NO_EAT + 1, start=0),
                 "to_play": spaces.Discrete(NUM_PLAYER, start=1),
             }
