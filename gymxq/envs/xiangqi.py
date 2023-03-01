@@ -514,7 +514,7 @@ class XiangQiV1(XQEnvBase):
         if terminated and not over:
             self._update_info()
 
-        if self.render_mode in ["human"]:
+        if self.render_mode in ["human", "rgb_array"]:
             self._render_gui(self.render_mode)
 
         info = self.satistics_info
