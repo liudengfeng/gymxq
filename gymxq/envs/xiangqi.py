@@ -441,8 +441,6 @@ class XiangQiV0(XQEnvBase):
             over = True
         truncated = False
         _, reward, terminated = self.game.step(action)
-        # 走后清空
-        self.ai_tip = []
         self.satistics_info["l"] += 1
         if (
             not terminated
