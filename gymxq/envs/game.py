@@ -33,27 +33,27 @@ def get_init_board(init_fen: Optional[str], use_rule: bool):
     return board
 
 
-def game_feature_shape(use_rule: bool):
-    """游戏特征shape
+# def game_feature_shape(use_rule: bool):
+#     """游戏特征shape
 
-    Args:
-        use_rule (bool): 是否使用规则
+#     Args:
+#         use_rule (bool): 是否使用规则
 
-    Returns:
-        tuple: (int,int,int)
-    """
-    if use_rule:
-        # S_1, A_1,S_2, A_2 ... S_18 [缺A_18]
-        return (
-            (NUM_HISTORY - 1) * (NUM_PIECE * NUM_PLAYER + NUM_PLAYER)
-            + NUM_PIECE * NUM_PLAYER
-            + 3,
-            NUM_ROW,
-            NUM_COL,
-        )
-    else:
-        # S_1
-        return (NUM_PIECE * NUM_PLAYER + 3, NUM_ROW, NUM_COL)
+#     Returns:
+#         tuple: (int,int,int)
+#     """
+#     if use_rule:
+#         # S_1, A_1,S_2, A_2 ... S_18 [缺A_18]
+#         return (
+#             (NUM_HISTORY - 1) * (NUM_PIECE * NUM_PLAYER + NUM_PLAYER)
+#             + NUM_PIECE * NUM_PLAYER
+#             + 3,
+#             NUM_ROW,
+#             NUM_COL,
+#         )
+#     else:
+#         # S_1
+#         return (NUM_PIECE * NUM_PLAYER + 3, NUM_ROW, NUM_COL)
 
 
 def encoded_action(action: int, lr: bool = False):
@@ -290,4 +290,5 @@ class Game:
         Returns:
             ndarray: (10, 9)数组
         """
-        return np.array(self.board.get2d(), dtype=np.int8).ravel()
+        # return np.array(self.board.get2d(), dtype=np.int8).ravel()
+        return np.array(self.board.get2d(), dtype=np.int8)
