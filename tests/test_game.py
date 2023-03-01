@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 import xqcpp
 
-from gymxq.game import Game, encoded_action
+from gymxq.envs.game import Game, encoded_action
 from gymxq.utils import move_to_coordinate
 from gymxq.constants import *
 
@@ -48,7 +48,7 @@ def test_feature_pieces(init_fen, expected):
     g = Game(init_fen, False)
     # g.board.show_board()
     actual = g.feature_pieces()
-    np.testing.assert_array_equal(np.array(expected).flatten(), actual)
+    np.testing.assert_array_equal(np.array(expected).ravel(), actual)
 
 
 @pytest.mark.parametrize(

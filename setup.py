@@ -1,12 +1,13 @@
-from setuptools import setup, find_packages
+# from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name="gymxq",
     version="1.0.0",
-    packages=find_packages(
-        # All keyword arguments below are optional:
-        exclude=["tests", "assets", "report.html"],  # empty by default
-    ),
+    # packages=find_packages(
+    #     # All keyword arguments below are optional:
+    #     exclude=["tests", "assets", "report.html"],  # empty by default
+    # ),
     include_package_data=True,
     install_requires=[
         "xqcpp>=1.0.0",

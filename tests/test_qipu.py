@@ -1,7 +1,7 @@
 import pytest
 
 from gymxq.constants import *
-from gymxq.game import Game
+from gymxq.envs.game import Game
 from gymxq.utils import front_and_back_tag, make_last_move_qipu
 
 

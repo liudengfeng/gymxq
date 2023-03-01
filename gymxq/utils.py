@@ -2,7 +2,7 @@ import os
 import sys
 from typing import Optional, List
 import termcolor
-import pygame
+# import pygame
 import six
 from io import StringIO
 import xqcpp
@@ -32,12 +32,6 @@ COLOR2NUM = dict(
     white=37,
     crimson=38,
 )
-
-
-def load_image(name):
-    fullname = os.path.join(os.path.dirname(__file__), "resources/{}".format(name))
-    # fullname = files("gymxq.resources").joinpath(name)
-    return pygame.image.load(fullname)
 
 
 def get_piece_png_file(color_id: int, piece_id: int):

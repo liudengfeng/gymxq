@@ -7,7 +7,7 @@ from gymnasium.wrappers.resize_observation import ResizeObservation
 from PIL import Image
 
 # import gymxq
-from gymxq.game import Game
+from gymxq.envs.game import Game
 from gymxq.constants import *
 
 
@@ -29,17 +29,17 @@ def test_basic_v1():
     assert len(info["legal_actions"]) == 44
 
 
-# def test_view_qipu_v0():
-#     env = gymnasium.make("xqv0", gen_qp=True, render_mode="human")
-#     obs, _ = env.reset()
-#     while True:
-#         action = env.sample_action()
-#         observation, reward, terminated, truncated, info = env.step(action)
-#         env.render()
-#         # time.sleep(1)
-#         if terminated or truncated:
-#             # time.sleep(3)
-#             break
+def test_view_qipu_v0():
+    env = gymnasium.make("xqv0", gen_qp=True, render_mode="human")
+    obs, _ = env.reset()
+    while True:
+        action = env.sample_action()
+        observation, reward, terminated, truncated, info = env.step(action)
+        env.render()
+        # time.sleep(1)
+        if terminated or truncated:
+            # time.sleep(3)
+            break
 
 
 def test_resize_v0():

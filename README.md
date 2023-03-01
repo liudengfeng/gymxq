@@ -1,6 +1,17 @@
 # gymxq 中国象棋
 Chinese chess game gymnasium environment 
 
+## pygame WSL2中文字体显示问题
+
+```bash
+复制中文字体，如阿里[alibabapuhuiti20] -> /usr/share/fonts/truetype/liberation
+fc-cache -fv
+```
+
+```python
+import pygame
+pygame.font.get_fonts()
+```
 
 ## `V0`
 以单个屏幕输出作为观察对象

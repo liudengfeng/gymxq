@@ -4,7 +4,7 @@ from typing import List, Optional
 
 import numpy as np
 import xqcpp
-from .constants import (
+from ..constants import (
     NUM_ROW,
     NUM_COL,
     NUM_PIECE,
@@ -15,7 +15,7 @@ from .constants import (
     RED_PLAYER,
     BLACK_PLAYER,
 )
-from .utils import move_to_coordinate, make_last_move_qipu
+from ..utils import move_to_coordinate, make_last_move_qipu
 
 
 def get_init_board(init_fen: Optional[str], use_rule: bool):
@@ -290,4 +290,4 @@ class Game:
         Returns:
             ndarray: (10, 9)数组
         """
-        return np.array(self.board.get2d(), dtype=np.int8).flatten()
+        return np.array(self.board.get2d(), dtype=np.int8).ravel()

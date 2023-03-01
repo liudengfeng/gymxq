@@ -8,15 +8,20 @@ import numpy as np
 import pygame
 from gymnasium import spaces
 
-from .constants import *
-from .utils import (
+from ..constants import *
+from ..utils import (
     get_center,
     get_piece_png_file,
-    load_image,
     move_to_coordinate,
     render_board_to_text,
 )
 from .game import Game
+
+
+def load_image(name):
+    fullname = os.path.join(os.path.dirname(__file__), "resources/{}".format(name))
+    # fullname = files("gymxq.resources").joinpath(name)
+    return pygame.image.load(fullname)
 
 
 class XQEnvBase(gym.Env):
@@ -209,10 +214,11 @@ class XQEnvBase(gym.Env):
 
     def _setting_text_render(self):
         """打印文本基础设置【字体、坐标】"""
+        font_name = "Alibaba PuHuiTi 2.0"
         # self.head_font = pygame.font.SysFont("microsoftjhengheiui", 20)
-        self.head_font = pygame.font.SysFont("Alibaba PuHuiTi 2.0", 18)
+        self.head_font = pygame.font.SysFont(font_name, 18)
         # self.detail_font = pygame.font.SysFont("microsoftjhengheiui", 14)
-        self.detail_font = pygame.font.SysFont("Alibaba PuHuiTi 2.0", 14)
+        self.detail_font = pygame.font.SysFont(font_name, 14)
         self.head_color = (21, 78, 210)
         self.detail_color = (75, 81, 93)
         self.w_s = FEATURE_WIDTH
