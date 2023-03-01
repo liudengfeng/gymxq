@@ -152,7 +152,9 @@ class XQEnvBase(gym.Env):
         else:
             assert isinstance(tip[0][0], str), "输入政策键要么为整数、要么为代表移动的四位数字符串"
         # top 10
-        self.ai_tip[self.satistics_info["l"]] = sorted(tip, key=lambda x: x[1], reverse=True)[:10]
+        self.ai_tip[self.satistics_info["l"]] = sorted(
+            tip, key=lambda x: x[1], reverse=True
+        )[:10]
 
     def _update_info(self):
         self.satistics_info["total"] += 1
@@ -301,7 +303,7 @@ class XQEnvBase(gym.Env):
                 self._draw_text(qp, (self.wc3, hi), False)
 
     def _draw_ai_tip(self):
-        ai_tip = self.ai_tip.get(self.satistics_info["l"], None)
+        ai_tip = self.ai_tip.get(self.satistics_info["l"] - 1, None)
         if ai_tip:
             # ai提示
             area_idx = 2
@@ -512,7 +514,7 @@ class XiangQiV1(XQEnvBase):
         if terminated and not over:
             self._update_info()
 
-        if self.render_mode in ["human", "rgb_array"]:
+        if self.render_mode in ["human"]:
             self._render_gui(self.render_mode)
 
         info = self.satistics_info
