@@ -67,7 +67,7 @@ class XQEnvBase(gym.Env):
         self._init_cn_qipu()
 
         # 政策提示信息 [(k,v),(k,v),...]
-        self.ai_pi_tip = []
+        self.ai_tip = []
 
     def _make_observation_space(self):
         raise NotImplementedError()
@@ -101,7 +101,7 @@ class XQEnvBase(gym.Env):
         if self.gen_qp:
             self._init_cn_qipu()
 
-        self.ai_pi_tip = []
+        self.ai_tip = []
 
         # 重置统计信息
         if options and options["reset_satistics"]:
@@ -136,7 +136,7 @@ class XQEnvBase(gym.Env):
             return self.action_space.sample(mask)
         return None
 
-    def set_ai_top(self, tip):
+    def add_ai_tip(self, tip):
         """设置AI提示信息
 
         Args:
@@ -155,7 +155,7 @@ class XQEnvBase(gym.Env):
         else:
             assert isinstance(tip[0][0], str), "输入政策键要么为整数、要么为代表移动的四位数字符串"
         # top 10
-        self.ai_pi_tip = sorted(tip, key=lambda x: x[1], reverse=True)[:10]
+        self.ai_tip = sorted(tip, key=lambda x: x[1], reverse=True)[:10]
 
     def _update_info(self):
         self.satistics_info["total"] += 1
@@ -304,7 +304,7 @@ class XQEnvBase(gym.Env):
                 self._draw_text(qp, (self.wc3, hi), False)
 
     def _draw_ai_tip(self):
-        if self.ai_pi_tip:
+        if self.ai_tip:
             # ai提示
             area_idx = 2
             h_s = self.area_starts[area_idx]
@@ -316,7 +316,7 @@ class XQEnvBase(gym.Env):
             self._draw_text("记谱", (self.wc1, hi), False)
             self._draw_text("政策", (self.wc2, hi), False)
             self._draw_text("状态", (self.wc3, hi), False)
-            for i, (k, v1, v2) in enumerate(self.ai_pi_tip, 1):
+            for i, (k, v1, v2) in enumerate(self.ai_tip, 1):
                 hi = h_s + h * (i + 1) + h_offset
                 cn_move = self.game.gen_qp(k)
                 # self._draw_text(k, (self.wc1, hi), False)
@@ -325,7 +325,7 @@ class XQEnvBase(gym.Env):
                 self._draw_text("{:.2f}".format(v2), (self.wc3, hi), False)
 
             # 显示后清空
-            self.ai_pi_tip = []
+            self.ai_tip = []
 
     def _draw_pieces(self):
         # 绘制棋子
@@ -442,7 +442,7 @@ class XiangQiV0(XQEnvBase):
         truncated = False
         _, reward, terminated = self.game.step(action)
         # 走后清空
-        self.ai_pi_tip = []
+        self.ai_tip = []
         self.satistics_info["l"] += 1
         if (
             not terminated
