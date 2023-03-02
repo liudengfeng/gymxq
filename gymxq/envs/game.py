@@ -288,7 +288,6 @@ class Game:
         """棋子特征编码【负数代表黑方棋子】
 
         Returns:
-            ndarray: (10, 9)数组
+            ndarray: shape = (10*9,) 数组
         """
-        # return np.array(self.board.get2d(), dtype=np.int8).ravel()
-        return np.array(self.board.get2d(), dtype=np.int8)
+        return np.array(self.board.get2d(), dtype=np.int8).ravel()

@@ -479,10 +479,11 @@ class XiangQiV1(XQEnvBase):
         self.observation_space = spaces.Dict(
             {
                 # [a,b]
+                # Gymnasium recommend flattening the observation to have only a 1D vector
                 "s": spaces.Box(
                     -NUM_PIECE,
                     NUM_PIECE,
-                    (NUM_ROW, NUM_COL),
+                    (NUM_ROW * NUM_COL,),
                     dtype=np.int8,
                 ),
                 "last_a": spaces.Discrete(NUM_ACTIONS + 1),
