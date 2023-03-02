@@ -114,6 +114,7 @@ class XQEnvBase(gym.Env):
         info.update(
             legal_actions=self.game.legal_actions_history[-1],
             to_play=self.game.to_play_id_history[-1],
+            fen=self.game.board.get_fen(),
         )
         return observation, info
 
@@ -468,6 +469,7 @@ class XiangQiV0(XQEnvBase):
             to_play=self.game.to_play_id_history[-1],
             # 适应 EnvCompatibility
             truncated=truncated,
+            fen=self.game.board.get_fen(),
         )
         return observation, reward, terminated, truncated, info
 
@@ -535,5 +537,6 @@ class XiangQiV1(XQEnvBase):
             to_play=self.game.to_play_id_history[-1],
             # 适应 EnvCompatibility
             truncated=truncated,
+            fen=self.game.board.get_fen(),
         )
         return observation, reward, terminated, truncated, info
