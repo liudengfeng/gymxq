@@ -510,9 +510,9 @@ class XiangQiV1(XQEnvBase):
 
     def step(self, action):
         truncated = False
-        over = False
-        if self.game._reward != 2:
-            over = True
+        # over = False
+        # if self.game._reward != 2:
+        #     over = True
         observation, reward, terminated = self.game.step(action)
 
         self.satistics_info["l"] += 1
@@ -528,7 +528,10 @@ class XiangQiV1(XQEnvBase):
             qp = self.game.make_last_record()
             self.cn_qipu.append(qp)
 
-        if terminated and not over:
+        # if terminated and not over:
+        #     self._update_info()
+
+        if terminated:
             self._update_info()
 
         if self.render_mode == "human":

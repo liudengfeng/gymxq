@@ -189,39 +189,41 @@ class Game:
         self.legal_actions_history.append(self.board.legal_actions())
 
     def step(self, action):
-        # 吸收状态
-        if self._reward != 2:
-            s = self.pieces_history[len(self.reward_history)]
-            a = self.action_history[-1]
-            return (
-                {
-                    "s": s,
-                    "last_a": a,
-                    "continuous_uneaten": self.continuous_uneaten_history[-1],
-                    "to_play": self.to_play_id_history[-1],
-                },
-                self._reward,
-                True,
-            )
-        # 非法走子
-        if self._illegal_move or (action not in self.legal_actions_history[-1]):
-            self._illegal_move = True
-            termination = True
-            reward = -1 if self.player_id_ == RED_PLAYER else 1
-            self._reward = reward
-            s = self.pieces_history[len(self.reward_history)]
-            a = self.action_history[-1]
-            return (
-                {
-                    "s": s,
-                    "last_a": a,
-                    "continuous_uneaten": self.continuous_uneaten_history[-1],
-                    "to_play": self.to_play_id_history[-1],
-                },
-                reward,
-                termination,
-            )
-
+        # # 吸收状态
+        # if self._reward != 2:
+        #     s = self.pieces_history[len(self.reward_history)]
+        #     a = self.action_history[-1]
+        #     return (
+        #         {
+        #             "s": s,
+        #             "last_a": a,
+        #             "continuous_uneaten": self.continuous_uneaten_history[-1],
+        #             "to_play": self.to_play_id_history[-1],
+        #         },
+        #         self._reward,
+        #         True,
+        #     )
+        # # 非法走子
+        # if self._illegal_move or (action not in self.legal_actions_history[-1]):
+        #     self._illegal_move = True
+        #     termination = True
+        #     reward = -1 if self.player_id_ == RED_PLAYER else 1
+        #     self._reward = reward
+        #     s = self.pieces_history[len(self.reward_history)]
+        #     a = self.action_history[-1]
+        #     return (
+        #         {
+        #             "s": s,
+        #             "last_a": a,
+        #             "continuous_uneaten": self.continuous_uneaten_history[-1],
+        #             "to_play": self.to_play_id_history[-1],
+        #         },
+        #         reward,
+        #         termination,
+        #     )
+        if action not in self.legal_actions_history[-1]:
+            raise RuntimeError("非法走子")
+        
         self.board.move(action)
         # 走子后更新done状态
         termination = self.board.is_finished()
