@@ -531,6 +531,9 @@ class XiangQiV1(XQEnvBase):
         if terminated and not over:
             self._update_info()
 
+        if self.render_mode == "human":
+            self._render_gui(self.render_mode)
+
         info = self.satistics_info
         info.update(
             legal_actions=self.game.legal_actions_history[-1],
