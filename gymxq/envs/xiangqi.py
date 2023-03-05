@@ -62,7 +62,6 @@ class XQEnvBase(gym.Env):
 
         # 对局信息
         self._init_satistics_info()
-        self.over_max_episode_steps = False
 
         self._init_cn_qipu()
 
@@ -94,8 +93,6 @@ class XQEnvBase(gym.Env):
     def reset(self, seed=None, options=None):
         # We need the following line to seed self.np_random
         super().reset(seed=seed)
-
-        self.over_max_episode_steps = False
 
         if self.gen_qp:
             self._init_cn_qipu()
@@ -463,7 +460,6 @@ class XiangQiV0(XQEnvBase):
             truncated = True
             reward = 0
             terminated = True
-            self.over_max_episode_steps = True
 
         if self.gen_qp:
             qp = self.game.make_last_record()
@@ -532,7 +528,6 @@ class XiangQiV1(XQEnvBase):
         ):
             truncated = True
             reward = 0
-            self.over_max_episode_steps = True
 
         if self.gen_qp:
             qp = self.game.make_last_record()

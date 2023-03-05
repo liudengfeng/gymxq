@@ -88,7 +88,6 @@ class Game:
 
     def _reset(self):
         # 初始化列表
-        self._reward = 2
         self._illegal_move = False  # 用于指示非法走子
         self.to_play_id_history = []
         self.continuous_uneaten_history = []
@@ -189,38 +188,6 @@ class Game:
         self.legal_actions_history.append(self.board.legal_actions())
 
     def step(self, action):
-        # # 吸收状态
-        # if self._reward != 2:
-        #     s = self.pieces_history[len(self.reward_history)]
-        #     a = self.action_history[-1]
-        #     return (
-        #         {
-        #             "s": s,
-        #             "last_a": a,
-        #             "continuous_uneaten": self.continuous_uneaten_history[-1],
-        #             "to_play": self.to_play_id_history[-1],
-        #         },
-        #         self._reward,
-        #         True,
-        #     )
-        # # 非法走子
-        # if self._illegal_move or (action not in self.legal_actions_history[-1]):
-        #     self._illegal_move = True
-        #     termination = True
-        #     reward = -1 if self.player_id_ == RED_PLAYER else 1
-        #     self._reward = reward
-        #     s = self.pieces_history[len(self.reward_history)]
-        #     a = self.action_history[-1]
-        #     return (
-        #         {
-        #             "s": s,
-        #             "last_a": a,
-        #             "continuous_uneaten": self.continuous_uneaten_history[-1],
-        #             "to_play": self.to_play_id_history[-1],
-        #         },
-        #         reward,
-        #         termination,
-        #     )
         if action not in self.legal_actions_history[-1]:
             legal_moves = [
                 xqcpp.action2movestr(a) for a in self.legal_actions_history[-1]
@@ -231,10 +198,8 @@ class Game:
         self.board.move(action)
         # 走子后更新done状态
         termination = self.board.is_finished()
-        # 棋盘假设红方先行，其结果以红方角度定义 [1：红胜, -1：红负, 0：平局]
+        # 游戏结果以红方角度定义 [1：红胜, -1：红负, 0：平局]
         reward = self.board.reward() if termination else 0
-        if termination:
-            self._reward = reward
 
         # 更新走子方
         self.player_id_ = self.board.next_player()
@@ -245,7 +210,7 @@ class Game:
 
         # next batch
         self._append_for_next_batch()
-        s = self.pieces_history[len(self.reward_history)]
+        s = self.pieces_history[-1]
         # 务必将移动列入观察对象，用其表达是否吃子
         return (
             {
