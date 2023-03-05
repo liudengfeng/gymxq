@@ -82,6 +82,8 @@ class XQEnvBase(gym.Env):
             # 黑方胜率
             "loss_rate": 0.0,
             "l": 0,
+            "tip": "",
+            "reason": "",
         }
 
     def _init_cn_qipu(self):
@@ -101,6 +103,9 @@ class XQEnvBase(gym.Env):
         # 重置统计信息
         if options and options["reset_satistics"]:
             self._init_satistics_info()
+
+        self.satistics_info["tip"] = ""
+        self.satistics_info["reason"] = ""
 
         self.game.reset()
         # episode steps
@@ -157,21 +162,31 @@ class XQEnvBase(gym.Env):
             tip, key=lambda x: x[1], reverse=True
         )[:10]
 
-    def _update_info(self):
+    def _update_info(self, reward, truncated):
         self.satistics_info["total"] += 1
-        reward, tip, reason = self.game.result()
+
         if reward == 1:
             self.satistics_info["win"] += 1
         elif reward == -1:
             self.satistics_info["loss"] += 1
         else:
             self.satistics_info["draw"] += 1
+
         self.satistics_info["win_rate"] = round(
             self.satistics_info["win"] / self.satistics_info["total"], 2
         )
         self.satistics_info["loss_rate"] = round(
             self.satistics_info["loss"] / self.satistics_info["total"], 2
         )
+
+        # 胜负信息
+        if not truncated:
+            _, tip, reason = self.game.result()
+        else:
+            tip, reason = "平局", "步数超限({})判和".format(self.metadata["max_episode_steps"])
+
+        self.satistics_info["tip"] = tip
+        self.satistics_info["reason"] = reason
 
     def step(self, action):
         raise NotImplementedError()
@@ -267,14 +282,12 @@ class XQEnvBase(gym.Env):
         self._draw_text(w_info, (self.wc1, h_s + h * 1 + h_offset), False)
         self._draw_text(d_info, (self.wc2, h_s + h * 1 + h_offset), False)
         self._draw_text(l_info, (self.wc3, h_s + h * 1 + h_offset), False)
-        # 胜负信息
-        if not self.over_max_episode_steps:
-            _, tip, reason = self.game.result()
-        else:
-            tip, reason = "平局", "步数超限({})判和".format(self.metadata["max_episode_steps"])
-        tip = "{}({:3d}步)".format(tip, self.satistics_info["l"])
+
+        tip = "{}({:3d}步)".format(self.satistics_info["tip"], self.satistics_info["l"])
         self._draw_text(tip, (self.wc2, h_s + h * 2 + h_offset), True)
-        self._draw_text(reason, (self.wc2, h_s + h * 3 + h_offset), False)
+        self._draw_text(
+            self.satistics_info["reason"], (self.wc2, h_s + h * 3 + h_offset), False
+        )
 
     def _draw_qipu(self):
         # 对局棋谱
@@ -437,9 +450,9 @@ class XiangQiV0(XQEnvBase):
         )
 
     def step(self, action):
-        over = False
-        if self.game._reward != 2:
-            over = True
+        # over = False
+        # if self.game._reward != 2:
+        #     over = True
         truncated = False
         _, reward, terminated = self.game.step(action)
         self.satistics_info["l"] += 1
@@ -456,8 +469,8 @@ class XiangQiV0(XQEnvBase):
             qp = self.game.make_last_record()
             self.cn_qipu.append(qp)
 
-        if terminated and not over:
-            self._update_info()
+        if terminated or truncated:
+            self._update_info(reward, truncated)
 
         if self.render_mode in ["human", "rgb_array"]:
             self._render_gui(self.render_mode)
@@ -510,9 +523,6 @@ class XiangQiV1(XQEnvBase):
 
     def step(self, action):
         truncated = False
-        # over = False
-        # if self.game._reward != 2:
-        #     over = True
         observation, reward, terminated = self.game.step(action)
 
         self.satistics_info["l"] += 1
@@ -528,11 +538,8 @@ class XiangQiV1(XQEnvBase):
             qp = self.game.make_last_record()
             self.cn_qipu.append(qp)
 
-        # if terminated and not over:
-        #     self._update_info()
-
-        if terminated:
-            self._update_info()
+        if terminated or truncated:
+            self._update_info(reward, truncated)
 
         if self.render_mode == "human":
             self._render_gui(self.render_mode)
