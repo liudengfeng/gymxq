@@ -1,6 +1,7 @@
 import math
 import os
 import time
+from importlib.resources import files
 from typing import Optional
 
 import gymnasium as gym
@@ -19,8 +20,8 @@ from .game import Game
 
 
 def load_image(name):
-    fullname = os.path.join(os.path.dirname(__file__), "resources/{}".format(name))
-    # fullname = files("gymxq.resources").joinpath(name)
+    # fullname = os.path.join(os.path.dirname(__file__), "resources/{}".format(name))
+    fullname = files("gymxq.resources").joinpath(name)
     return pygame.image.load(fullname)
 
 
