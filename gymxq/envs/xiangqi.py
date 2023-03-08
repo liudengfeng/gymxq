@@ -497,7 +497,7 @@ class XiangQiV1(XQEnvBase):
                     dtype=np.int8,
                 ),
                 # "last_a": spaces.Discrete(NUM_ACTIONS + 1),
-                "continuous_uneaten": spaces.Discrete(MAX_NUM_NO_EAT),
+                "continuous_uneaten": spaces.Discrete(MAX_NUM_NO_EAT + 1),
                 "to_play": spaces.Discrete(NUM_PLAYER, start=1),
             }
         )
