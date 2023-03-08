@@ -167,7 +167,6 @@ class Game:
         return (
             {
                 "s": s,
-                # "last_a": action,
                 "continuous_uneaten": self.continuous_uneaten_history[-1],
                 "to_play": self.to_play_id_history[-1],
             },
@@ -206,7 +205,6 @@ class Game:
         # a = self.action_history[-1]
         return {
             "s": s,
-            # "last_a": a,
             "continuous_uneaten": self.continuous_uneaten_history[-1],
             "to_play": self.to_play_id_history[-1],
         }
