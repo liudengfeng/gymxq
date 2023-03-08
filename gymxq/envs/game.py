@@ -33,29 +33,6 @@ def get_init_board(init_fen: Optional[str], use_rule: bool):
     return board
 
 
-# def game_feature_shape(use_rule: bool):
-#     """游戏特征shape
-
-#     Args:
-#         use_rule (bool): 是否使用规则
-
-#     Returns:
-#         tuple: (int,int,int)
-#     """
-#     if use_rule:
-#         # S_1, A_1,S_2, A_2 ... S_18 [缺A_18]
-#         return (
-#             (NUM_HISTORY - 1) * (NUM_PIECE * NUM_PLAYER + NUM_PLAYER)
-#             + NUM_PIECE * NUM_PLAYER
-#             + 3,
-#             NUM_ROW,
-#             NUM_COL,
-#         )
-#     else:
-#         # S_1
-#         return (NUM_PIECE * NUM_PLAYER + 3, NUM_ROW, NUM_COL)
-
-
 def encoded_action(action: int, lr: bool = False):
     """编码移动序号
 
@@ -88,7 +65,7 @@ class Game:
 
     def _reset(self):
         # 初始化列表
-        self._illegal_move = False  # 用于指示非法走子
+        # self._illegal_move = False  # 用于指示非法走子
         self.to_play_id_history = []
         self.continuous_uneaten_history = []
         self.legal_actions_history = []
@@ -106,10 +83,10 @@ class Game:
 
         self._append_for_next_batch()
 
-        piece_filled = np.zeros(NUM_ROW * NUM_COL, dtype=np.uint8)
+        # piece_filled = np.zeros(NUM_ROW * NUM_COL, dtype=np.uint8)
 
-        # 注意填充 NUM_ACTIONS 代表空白
-        self.action_history.append(NUM_ACTIONS)
+        # # 注意填充 NUM_ACTIONS 代表空白
+        # self.action_history.append(NUM_ACTIONS)
         # 初始状态
         s0 = self.feature_pieces()
         self.pieces_history.append(s0)
@@ -155,13 +132,15 @@ class Game:
         Returns:
             str: 移动中文记谱
         """
-        if self._illegal_move:
-            return "非法走子"
-        if len(self.action_history) >= 1 and self.action_history[-1] != NUM_ACTIONS:
+        # if self._illegal_move:
+        #     return "非法走子"
+        # if len(self.action_history) >= 1 and self.action_history[-1] != NUM_ACTIONS:
+        if len(self.action_history) >= 1:
             qp = make_last_move_qipu(
                 self.board, self.action_to_move_string(self.action_history[-1])
             )
             return qp
+        return None
 
     def gen_qp(self, not_move: str):
         """生成尚未执行的移动棋谱
@@ -228,26 +207,32 @@ class Game:
         reason = ""
         reward = 0
         # 红方角度定义 [1：红胜, -1：红负, 0：平局]
-        if self._illegal_move:
-            reward = -1 if self.player_id_ == RED_PLAYER else 1
-            tip = "红负" if self.player_id_ == RED_PLAYER else "红胜"
-            reason = "红方非法走子" if self.player_id_ == RED_PLAYER else "黑方非法走子"
-        else:
-            termination = self.board.is_finished()
-            if termination:
-                output = self.board.game_result_string().split("（")
-                # 去除前后符号
-                tip = output[1][:2]
-                reason = output[1].split("[")[1][:-1]
+        # if self._illegal_move:
+        #     reward = -1 if self.player_id_ == RED_PLAYER else 1
+        #     tip = "红负" if self.player_id_ == RED_PLAYER else "红胜"
+        #     reason = "红方非法走子" if self.player_id_ == RED_PLAYER else "黑方非法走子"
+        # else:
+        #     termination = self.board.is_finished()
+        #     if termination:
+        #         output = self.board.game_result_string().split("（")
+        #         # 去除前后符号
+        #         tip = output[1][:2]
+        #         reason = output[1].split("[")[1][:-1]
+        termination = self.board.is_finished()
+        if termination:
+            output = self.board.game_result_string().split("（")
+            # 去除前后符号
+            tip = output[1][:2]
+            reason = output[1].split("[")[1][:-1]
         return (reward, tip, reason)
 
     def reset(self):
         self._reset()
         s = self.pieces_history[-1]
-        a = self.action_history[-1]
+        # a = self.action_history[-1]
         return {
             "s": s,
-            "last_a": a,
+            # "last_a": a,
             "continuous_uneaten": self.continuous_uneaten_history[-1],
             "to_play": self.to_play_id_history[-1],
         }
