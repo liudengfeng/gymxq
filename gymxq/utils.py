@@ -1,24 +1,25 @@
 import os
 import sys
-from typing import Optional, List
-import termcolor
-
-# import pygame
-import six
-from io import StringIO
-import xqcpp
 
 # from importlib.resources import files
 from contextlib import closing
+from io import StringIO
+from typing import List, Optional
+
+# import pygame
+import six
+import termcolor
+import xqcpp
+
 from .constants import (
+    BLACK_PLAYER,
     BOARD_NUM_PROMPT,
     NUM_COL,
     NUM_ROW,
     PIECE_HEIGHT,
     PIECE_WIDTH,
-    RED_PLAYER,
-    BLACK_PLAYER,
     RECORD_NOTES,
+    RED_PLAYER,
 )
 
 PNG_MAPS = {1: "P", 2: "A", 3: "B", 4: "C", 5: "N", 6: "R", 7: "K"}

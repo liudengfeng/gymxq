@@ -33,28 +33,6 @@ def get_init_board(init_fen: Optional[str], use_rule: bool):
     return board
 
 
-def encoded_action(action: int, lr: bool = False):
-    """编码移动序号
-
-    Args:
-        action (int): 移动序号
-
-    Returns:
-        ndarray: np.ndarray(2,10,9)
-    """
-    res = np.zeros((2, NUM_ROW, NUM_COL), dtype=np.uint8)
-    if action == NUM_ACTIONS:
-        return res
-    else:
-        move = xqcpp.action2movestr(action)
-        if lr:
-            move = xqcpp.move2lr(move)
-        x0, y0, x1, y1 = move_to_coordinate(move, True)
-        res[0][y0][x0] = 1
-        res[1][y1][x1] = 1
-        return res
-
-
 class Game:
     """中国象棋游戏"""
 
