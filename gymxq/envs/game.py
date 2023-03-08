@@ -61,10 +61,6 @@ class Game:
 
         self._append_for_next_batch()
 
-        # piece_filled = np.zeros(NUM_ROW * NUM_COL, dtype=np.uint8)
-
-        # # 注意填充 NUM_ACTIONS 代表空白
-        # self.action_history.append(NUM_ACTIONS)
         # 初始状态
         s0 = self.feature_pieces()
         self.pieces_history.append(s0)
@@ -110,9 +106,6 @@ class Game:
         Returns:
             str: 移动中文记谱
         """
-        # if self._illegal_move:
-        #     return "非法走子"
-        # if len(self.action_history) >= 1 and self.action_history[-1] != NUM_ACTIONS:
         if len(self.action_history) >= 1:
             qp = make_last_move_qipu(
                 self.board, self.action_to_move_string(self.action_history[-1])
@@ -167,12 +160,13 @@ class Game:
 
         # next batch
         self._append_for_next_batch()
+        
         s = self.pieces_history[-1]
         # 务必将移动列入观察对象，用其表达是否吃子
         return (
             {
                 "s": s,
-                "last_a": action,
+                # "last_a": action,
                 "continuous_uneaten": self.continuous_uneaten_history[-1],
                 "to_play": self.to_play_id_history[-1],
             },
