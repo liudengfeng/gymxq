@@ -122,6 +122,7 @@ def render_board_to_text(
     """
     outfile = StringIO()
     # outfile = sys.stdout
+    outfile.write("\n")
     if title:
         outfile.write(title.center(17))
         outfile.write("\n")
