@@ -43,7 +43,6 @@ class Game:
 
     def _reset(self):
         # 初始化列表
-        # self._illegal_move = False  # 用于指示非法走子
         self.to_play_id_history = []
         self.continuous_uneaten_history = []
         self.legal_actions_history = []
@@ -64,6 +63,8 @@ class Game:
         # 初始状态
         s0 = self.feature_pieces()
         self.pieces_history.append(s0)
+
+        self.steps = self.board.steps() - 1
 
     def __len__(self):
         return len(self.reward_history)
@@ -146,6 +147,7 @@ class Game:
             raise RuntimeError("非法走子。合法移动={}，选中={}".format(legal_moves, to_move))
 
         self.board.move(action)
+        self.steps += 1
         # 走子后更新done状态
         termination = self.board.is_finished()
 
@@ -167,6 +169,7 @@ class Game:
         return (
             {
                 "s": s,
+                "steps": self.steps,
                 "continuous_uneaten": self.continuous_uneaten_history[-1],
                 "to_play": self.to_play_id_history[-1],
             },
@@ -205,6 +208,7 @@ class Game:
         # a = self.action_history[-1]
         return {
             "s": s,
+            "steps": self.steps,
             "continuous_uneaten": self.continuous_uneaten_history[-1],
             "to_play": self.to_play_id_history[-1],
         }
