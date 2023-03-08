@@ -148,6 +148,7 @@ class Game:
         self.board.move(action)
         # 走子后更新done状态
         termination = self.board.is_finished()
+
         # 游戏结果以红方角度定义 [1：红胜, -1：红负, 0：平局]
         reward = self.board.reward() if termination else 0
 
@@ -160,7 +161,7 @@ class Game:
 
         # next batch
         self._append_for_next_batch()
-        
+
         s = self.pieces_history[-1]
         # 务必将移动列入观察对象，用其表达是否吃子
         return (
@@ -190,6 +191,7 @@ class Game:
         #         # 去除前后符号
         #         tip = output[1][:2]
         #         reason = output[1].split("[")[1][:-1]
+        # 游戏并不限制步数，在环境中处理超限
         termination = self.board.is_finished()
         if termination:
             output = self.board.game_result_string().split("（")

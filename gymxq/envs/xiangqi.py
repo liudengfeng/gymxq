@@ -454,11 +454,12 @@ class XiangQiV0(XQEnvBase):
         self.satistics_info["l"] += 1
         if (
             not terminated
-            and self.satistics_info["l"] == self.metadata["max_episode_steps"]
+            and self.satistics_info["l"] >= self.metadata["max_episode_steps"]
         ):
+            # truncated 与 terminated 不得同时为真
             truncated = True
             reward = 0
-            terminated = True
+            terminated = False
 
         if self.gen_qp:
             qp = self.game.make_last_record()
@@ -523,7 +524,7 @@ class XiangQiV1(XQEnvBase):
         self.satistics_info["l"] += 1
         if (
             not terminated
-            and self.satistics_info["l"] == self.metadata["max_episode_steps"]
+            and self.satistics_info["l"] >= self.metadata["max_episode_steps"]
         ):
             truncated = True
             reward = 0
