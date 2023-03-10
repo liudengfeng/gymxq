@@ -154,7 +154,7 @@ class Game:
         # 游戏结果以红方角度定义 [1：红胜, -1：红负, 0：平局]
         reward = self.board.reward() if termination else 0
         # 单代理始终以本方角度定义reward
-        sign = 1 if self.first_player == RED_PLAYER else -1
+        sign = 1 if self.player_id_ == RED_PLAYER else -1
         reward *= sign
 
         # 更新走子方

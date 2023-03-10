@@ -107,7 +107,7 @@ class XQEnvBase(gym.Env):
 
         self.game.reset()
         # episode steps
-        self.satistics_info["l"] = self.game.steps()
+        self.satistics_info["l"] = self.game.steps
         self.ai_tip = {}
 
         if self.render_mode in ["human", "rgb_array"]:
@@ -160,10 +160,10 @@ class XQEnvBase(gym.Env):
             tip, key=lambda x: x[1], reverse=True
         )[:10]
 
-    def _update_info(self, reward, truncated):
+    def _update_info(self, to_play, reward, truncated):
         self.satistics_info["total"] += 1
-
-        if self.game.first_player == RED_PLAYER:
+        # 红方走子后的结果
+        if to_play == BLACK_PLAYER:
             if reward == 1:
                 self.satistics_info["win"] += 1
             elif reward == -1:
@@ -176,7 +176,7 @@ class XQEnvBase(gym.Env):
             elif reward == 1:
                 self.satistics_info["loss"] += 1
             else:
-                self.satistics_info["draw"] += 1            
+                self.satistics_info["draw"] += 1
 
         self.satistics_info["win_rate"] = round(
             self.satistics_info["win"] / self.satistics_info["total"], 2
@@ -471,7 +471,7 @@ class XiangQiV0(XQEnvBase):
             self.cn_qipu.append(qp)
 
         if terminated or truncated:
-            self._update_info(reward, truncated)
+            self._update_info(self.game.to_play(), reward, truncated)
 
         if self.render_mode in ["human", "rgb_array"]:
             self._render_gui(self.render_mode)
@@ -539,7 +539,7 @@ class XiangQiV1(XQEnvBase):
             self.cn_qipu.append(qp)
 
         if terminated or truncated:
-            self._update_info(reward, truncated)
+            self._update_info(self.game.to_play(), reward, truncated)
 
         if self.render_mode == "human":
             self._render_gui(self.render_mode)
