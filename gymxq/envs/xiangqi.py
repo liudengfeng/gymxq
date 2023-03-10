@@ -107,7 +107,7 @@ class XQEnvBase(gym.Env):
 
         self.game.reset()
         # episode steps
-        self.satistics_info["l"] = self.game.board.steps() - 1
+        self.satistics_info["l"] = self.game.steps()
         self.ai_tip = {}
 
         if self.render_mode in ["human", "rgb_array"]:
@@ -163,12 +163,20 @@ class XQEnvBase(gym.Env):
     def _update_info(self, reward, truncated):
         self.satistics_info["total"] += 1
 
-        if reward == 1:
-            self.satistics_info["win"] += 1
-        elif reward == -1:
-            self.satistics_info["loss"] += 1
+        if self.game.first_player == RED_PLAYER:
+            if reward == 1:
+                self.satistics_info["win"] += 1
+            elif reward == -1:
+                self.satistics_info["loss"] += 1
+            else:
+                self.satistics_info["draw"] += 1
         else:
-            self.satistics_info["draw"] += 1
+            if reward == -1:
+                self.satistics_info["win"] += 1
+            elif reward == 1:
+                self.satistics_info["loss"] += 1
+            else:
+                self.satistics_info["draw"] += 1            
 
         self.satistics_info["win_rate"] = round(
             self.satistics_info["win"] / self.satistics_info["total"], 2
@@ -446,9 +454,6 @@ class XiangQiV0(XQEnvBase):
         )
 
     def step(self, action):
-        # over = False
-        # if self.game._reward != 2:
-        #     over = True
         truncated = False
         _, reward, terminated = self.game.step(action)
         self.satistics_info["l"] += 1

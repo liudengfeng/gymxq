@@ -153,6 +153,9 @@ class Game:
 
         # 游戏结果以红方角度定义 [1：红胜, -1：红负, 0：平局]
         reward = self.board.reward() if termination else 0
+        # 单代理始终以本方角度定义reward
+        sign = 1 if self.first_player == RED_PLAYER else -1
+        reward *= sign
 
         # 更新走子方
         self.player_id_ = self.board.next_player()
@@ -165,7 +168,6 @@ class Game:
         self._append_for_next_batch()
 
         s = self.pieces_history[-1]
-        # 务必将移动列入观察对象，用其表达是否吃子
         return (
             {
                 "s": s,
