@@ -79,7 +79,7 @@ class Game:
         Returns:
             str: 4位整数代表的移动字符串
         """
-        return xqcpp.action2movestr(action)
+        return xqcpp.a2m(action)
 
     @staticmethod
     def move_string_to_action(move: str) -> int:
@@ -91,7 +91,7 @@ class Game:
         Returns:
             int: 移动编码
         """
-        return xqcpp.movestr2action(move)
+        return xqcpp.m2a(move)
 
     def get_fen(self):
         """棋盘状态fen字符串
@@ -141,9 +141,9 @@ class Game:
     def step(self, action):
         if action not in self.legal_actions_history[-1]:
             legal_moves = [
-                xqcpp.action2movestr(a) for a in self.legal_actions_history[-1]
+                xqcpp.a2m(a) for a in self.legal_actions_history[-1]
             ]
-            to_move = xqcpp.action2movestr(action)
+            to_move = xqcpp.a2m(action)
             raise RuntimeError("非法走子。合法移动={}，选中={}".format(legal_moves, to_move))
 
         self.board.move(action)
