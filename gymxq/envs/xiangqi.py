@@ -237,9 +237,7 @@ class XQEnvBase(gym.Env):
     def _setting_text_render(self):
         """打印文本基础设置【字体、坐标】"""
         font_name = "Alibaba PuHuiTi 2.0"
-        # self.head_font = pygame.font.SysFont("microsoftjhengheiui", 20)
         self.head_font = pygame.font.SysFont(font_name, 18)
-        # self.detail_font = pygame.font.SysFont("microsoftjhengheiui", 14)
         self.detail_font = pygame.font.SysFont(font_name, 14)
         self.head_color = (21, 78, 210)
         self.detail_color = (75, 81, 93)
