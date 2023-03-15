@@ -149,10 +149,13 @@ class XQEnvBase(gym.Env):
             3. 按v1值降序排列
         """
         assert tip, "提示不得为空"
-        assert all(len(a) == 3 for a in tip), "每项提示必须为键、值、值三元素"
+        assert all(len(a) == 4 for a in tip), "每项提示必须提供 移动、概率、状态值、先验 四元素"
         # 转换为 move str
         if isinstance(tip[0][0], int):
-            tip = [(self.game.action_to_move_string(k), v1, v2) for k, v1, v2 in tip]
+            tip = [
+                (self.game.action_to_move_string(k), v1, v2, v3)
+                for k, v1, v2, v3 in tip
+            ]
         else:
             assert isinstance(tip[0][0], str), "输入政策键要么为整数、要么为代表移动的四位数字符串"
         # top 10
@@ -243,9 +246,13 @@ class XQEnvBase(gym.Env):
         self.detail_color = (75, 81, 93)
         self.w_s = FEATURE_WIDTH
         self.info_w = SCREEN_WIDTH - FEATURE_WIDTH
-        self.wc1 = self.w_s + int(self.info_w / 6) * 1
-        self.wc2 = self.w_s + int(self.info_w / 6) * 3
-        self.wc3 = self.w_s + int(self.info_w / 6) * 5
+        num_cell = 10
+        w_cell = int(self.info_w / num_cell)
+        self.wc1 = self.w_s + w_cell * 1
+        self.wc2 = self.w_s + w_cell * 3
+        self.wc3 = self.w_s + w_cell * 5
+        self.wc4 = self.w_s + w_cell * 7
+        self.wc5 = self.w_s + w_cell * 9
         rows = [5, 12, 12]
         # 行高度
         self.info_h = int(SCREEN_HEIGHT / sum(rows))
@@ -270,25 +277,25 @@ class XQEnvBase(gym.Env):
         # 统计信息
         self._draw_text(
             "红方{:>3d}%".format(int(self.satistics_info["win_rate"] * 100)),
-            (self.wc1, h_s),
+            (self.wc2, h_s),
             True,
         )
         self._draw_text(
             "黑方{:>3d}%".format(int(self.satistics_info["loss_rate"] * 100)),
-            (self.wc3, h_s),
+            (self.wc4, h_s),
             True,
         )
         w_info = "{:^5d}".format(self.satistics_info["win"])
         d_info = "{:^5d}".format(self.satistics_info["draw"])
         l_info = "{:^5d}".format(self.satistics_info["loss"])
         self._draw_text(w_info, (self.wc1, h_s + h * 1 + h_offset), False)
-        self._draw_text(d_info, (self.wc2, h_s + h * 1 + h_offset), False)
-        self._draw_text(l_info, (self.wc3, h_s + h * 1 + h_offset), False)
+        self._draw_text(d_info, (self.wc3, h_s + h * 1 + h_offset), False)
+        self._draw_text(l_info, (self.wc5, h_s + h * 1 + h_offset), False)
 
         tip = "{}({:3d}步)".format(self.satistics_info["tip"], self.satistics_info["l"])
-        self._draw_text(tip, (self.wc2, h_s + h * 2 + h_offset), True)
+        self._draw_text(tip, (self.wc3, h_s + h * 2 + h_offset), True)
         self._draw_text(
-            self.satistics_info["reason"], (self.wc2, h_s + h * 3 + h_offset), False
+            self.satistics_info["reason"], (self.wc3, h_s + h * 3 + h_offset), False
         )
 
     def _draw_qipu(self):
@@ -317,7 +324,7 @@ class XQEnvBase(gym.Env):
                 red_qp = "" if qp is None else qp
                 self._draw_text(red_qp, (self.wc2, hi), False)
             else:
-                self._draw_text(qp, (self.wc3, hi), False)
+                self._draw_text(qp, (self.wc4, hi), False)
 
     def _draw_ai_tip(self):
         ai_tip = self.ai_tip.get(self.satistics_info["l"] - 1, None)
@@ -330,16 +337,20 @@ class XQEnvBase(gym.Env):
             h_offset = 10
             self._draw_text("AI提示", (self.w_s + w_offset, h_s), True)
             hi = h_s + h * 1 + h_offset
-            self._draw_text("记谱", (self.wc1, hi), False)
-            self._draw_text("政策", (self.wc2, hi), False)
-            self._draw_text("状态", (self.wc3, hi), False)
-            for i, (k, v1, v2) in enumerate(ai_tip, 1):
+            self._draw_text("记谱", (self.wc1 + w_offset, hi), False)
+            self._draw_text("政策", (self.wc2 + w_offset, hi), False)
+            self._draw_text("状态", (self.wc3 + w_offset, hi), False)
+            self._draw_text("先验", (self.wc4 + w_offset, hi), False)
+            for i, (k, v1, v2, v3) in enumerate(ai_tip, 1):
                 hi = h_s + h * (i + 1) + h_offset
                 cn_move = self.game.gen_qp(k)
                 # self._draw_text(k, (self.wc1, hi), False)
-                self._draw_text(cn_move, (self.wc1, hi), False)
-                self._draw_text("{:.2f}".format(v1), (self.wc2, hi), False)
-                self._draw_text("{:.2f}".format(v2), (self.wc3, hi), False)
+                self._draw_text(cn_move, (self.wc1 + w_offset, hi), False)
+                self._draw_text("{:.2f}".format(v1), (self.wc2 + w_offset, hi), False)
+                self._draw_text(
+                    "{:^-4.2f}".format(v2), (self.wc3 + w_offset, hi), False
+                )
+                self._draw_text("{:.2f}".format(v3), (self.wc4 + w_offset, hi), False)
 
     def _draw_pieces(self):
         # 绘制棋子
