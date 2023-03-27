@@ -140,9 +140,7 @@ class Game:
 
     def step(self, action):
         if action not in self.legal_actions_history[-1]:
-            legal_moves = [
-                xqcpp.a2m(a) for a in self.legal_actions_history[-1]
-            ]
+            legal_moves = [xqcpp.a2m(a) for a in self.legal_actions_history[-1]]
             to_move = xqcpp.a2m(action)
             raise RuntimeError("非法走子。合法移动={}，选中={}".format(legal_moves, to_move))
 
@@ -207,7 +205,6 @@ class Game:
     def reset(self):
         self._reset()
         s = self.pieces_history[-1]
-        # a = self.action_history[-1]
         return {
             "s": s,
             "steps": self.steps,

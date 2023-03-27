@@ -115,6 +115,7 @@ class XQEnvBase(gym.Env):
         observation = self._get_obs()
         info = self.satistics_info
         info.update(
+            last_action=NUM_ACTIONS,
             legal_actions=self.game.legal_actions_history[-1],
             to_play=self.game.to_play_id_history[-1],
             fen=self.game.board.get_fen(),
@@ -489,6 +490,9 @@ class XiangQiV0(XQEnvBase):
         info = self.satistics_info
         info.update(
             legal_actions=self.game.legal_actions_history[-1],
+            last_action=NUM_ACTIONS
+            if len(self.game.action_history) == 1
+            else self.game.action_history[-2],
             to_play=self.game.to_play_id_history[-1],
             # 适应 EnvCompatibility
             truncated=truncated,
@@ -557,6 +561,9 @@ class XiangQiV1(XQEnvBase):
         info.update(
             legal_actions=self.game.legal_actions_history[-1],
             to_play=self.game.to_play_id_history[-1],
+            last_action=NUM_ACTIONS
+            if len(self.game.action_history) == 1
+            else self.game.action_history[-2],
             # 适应 EnvCompatibility
             truncated=truncated,
             fen=self.game.board.get_fen(),
