@@ -1,9 +1,12 @@
 # from setuptools import setup, find_packages
 from setuptools import setup
 
-setup(
+setup(00
     name="gymxq",
     version="1.0.0",
+    long_description="""
+    gymnasium like Chinese xiangqi single agent reinforcement learning environment
+    """,
     # packages=find_packages(
     #     # All keyword arguments below are optional:
     #     exclude=["tests", "assets", "report.html"],  # empty by default
