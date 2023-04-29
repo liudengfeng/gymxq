@@ -1,7 +1,7 @@
 # from setuptools import setup, find_packages
 from setuptools import setup
 
-setup(00
+setup(
     name="gymxq",
     version="1.0.0",
     long_description="""
@@ -13,7 +13,7 @@ setup(00
     # ),
     include_package_data=True,
     install_requires=[
-        "xqcpp>=1.0.0",
+        "cppxq>=1.0.0",
         "gymnasium>=0.27.0",
         "pygame>=2.1.2",
         "moviepy>=1.0.3",

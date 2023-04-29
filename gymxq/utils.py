@@ -9,7 +9,7 @@ from typing import List, Optional
 # import pygame
 import six
 import termcolor
-import xqcpp
+import cppxq
 
 from .constants import (
     BLACK_PLAYER,
@@ -109,12 +109,12 @@ def colorize(string, color, bold=False, highlight=False):
 
 
 def render_board_to_text(
-    board: xqcpp.XqBoard, last_move: Optional[str] = None, title: Optional[str] = None
+    board: cppxq.XqBoard, last_move: Optional[str] = None, title: Optional[str] = None
 ):
     """棋盘文本表达
 
     Args:
-        board (xqcpp.XqBoard): 棋盘实例
+        board (cppxq.XqBoard): 棋盘实例
         last_move (Optional[str], optional): 最后移动字符串. Defaults to None.
         title (Optional[str], optional): 标题. Defaults to None.
     Note:
@@ -167,12 +167,12 @@ def colorize_v2(string, color, bold=False):
 
 
 def render_board_to_text_v2(
-    board: xqcpp.XqBoard, last_move: Optional[str] = None, title: Optional[str] = None
+    board: cppxq.XqBoard, last_move: Optional[str] = None, title: Optional[str] = None
 ):
     """棋盘文本表达
 
     Args:
-        board (xqcpp.XqBoard): 棋盘实例
+        board (cppxq.XqBoard): 棋盘实例
         last_move (Optional[str], optional): 最后移动字符串. Defaults to None.
         title (Optional[str], optional): 标题. Defaults to None.
     Note:
@@ -321,7 +321,7 @@ def _forward_and_backward_tag(piece, y0):
             return "退"
 
 
-def make_last_move_qipu(board: xqcpp.XqBoard, move: str):
+def make_last_move_qipu(board: cppxq.XqBoard, move: str):
     record = ""
     x0, y0, x1, y1 = move_to_coordinate(move)
     piece = board.get_piece(x1, y1)

@@ -3,7 +3,7 @@ import sys
 from typing import List, Optional
 
 import numpy as np
-import xqcpp
+import cppxq
 from ..constants import (
     NUM_ROW,
     NUM_COL,
@@ -19,7 +19,7 @@ from ..utils import move_to_coordinate, make_last_move_qipu
 
 
 def get_init_board(init_fen: Optional[str], use_rule: bool):
-    board = xqcpp.XqBoard()
+    board = cppxq.XqBoard()
     board.reset()
     # 设置移动类型判断规则
     board.set_use_rule_flag(use_rule)
@@ -79,7 +79,7 @@ class Game:
         Returns:
             str: 4位整数代表的移动字符串
         """
-        return xqcpp.a2m(action)
+        return cppxq.a2m(action)
 
     @staticmethod
     def move_string_to_action(move: str) -> int:
@@ -91,7 +91,7 @@ class Game:
         Returns:
             int: 移动编码
         """
-        return xqcpp.m2a(move)
+        return cppxq.m2a(move)
 
     def get_fen(self):
         """棋盘状态fen字符串
@@ -140,8 +140,8 @@ class Game:
 
     def step(self, action):
         if action not in self.legal_actions_history[-1]:
-            legal_moves = [xqcpp.a2m(a) for a in self.legal_actions_history[-1]]
-            to_move = xqcpp.a2m(action)
+            legal_moves = [cppxq.a2m(a) for a in self.legal_actions_history[-1]]
+            to_move = cppxq.a2m(action)
             raise RuntimeError("非法走子。合法移动={}，选中={}".format(legal_moves, to_move))
 
         self.board.move(action)
